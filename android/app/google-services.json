@@ -1,0 +1,98 @@
+{
+  "project_info": {
+    "project_number": "223388328289",
+    "firebase_url": "https://facerecognition-6a867.firebaseio.com",
+    "project_id": "facerecognition-6a867",
+    "storage_bucket": "facerecognition-6a867.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:223388328289:android:4a83b594217a8eeb",
+        "android_client_info": {
+          "package_name": "com.attendance_system"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "223388328289-b0dfoold3rn99mg9tk68np16jtn8l27o.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDs6JkECmgJbeJnea1jDzAHibwoCutk6D4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "223388328289-b0dfoold3rn99mg9tk68np16jtn8l27o.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:223388328289:android:8b3fb8258c3cf22e",
+        "android_client_info": {
+          "package_name": "com.face_recognition_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "223388328289-b0dfoold3rn99mg9tk68np16jtn8l27o.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDs6JkECmgJbeJnea1jDzAHibwoCutk6D4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "223388328289-b0dfoold3rn99mg9tk68np16jtn8l27o.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:223388328289:android:72d22a072eba24d508e520",
+        "android_client_info": {
+          "package_name": "com.hethongdiemdanh"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "223388328289-b0dfoold3rn99mg9tk68np16jtn8l27o.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDs6JkECmgJbeJnea1jDzAHibwoCutk6D4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "223388328289-b0dfoold3rn99mg9tk68np16jtn8l27o.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
