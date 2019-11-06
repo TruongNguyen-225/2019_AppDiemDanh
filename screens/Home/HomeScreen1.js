@@ -332,7 +332,7 @@ export default class HomeScreen extends Component {
                       <Image source={icons_add} style={{width: '80%', height: '80%'}} />
                     </View>
                     <Text style={{fontSize: 15, flexWrap: 'wrap'}}>
-                      Tạo Lớp Mới
+                      Hướng Dẫn Sử Dụng
                     </Text>
                   </TouchableOpacity>
                 </View>

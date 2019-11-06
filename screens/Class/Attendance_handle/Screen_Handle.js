@@ -39,8 +39,7 @@ var getTime = thoigian.getTime();
 
 var datecurrent = year + '-' + month + '-' + date;
 var time = hour + ':' + minutes + ':' + seconds;
-// var datetime = 'date and time attendance at ' + datecurrent;
-var datetime = parseInt(hour) * 60 * 60 + parseInt(minutes) * 60 + parseInt(seconds);
+
 
 export default class CreateClass extends Component {
   static navigationOptions = {
@@ -54,62 +53,48 @@ export default class CreateClass extends Component {
       images: null,
       listStudent: [],
       datecurrent: datecurrent,
-      timeCompare: datetime,
+      // timeCompare:null,
       tittle: '',
       router: 'HomeScreen',
       className_Attendance: Global.tittle,
       value_Attdance: [],
       getDateTime: null,
-      getTimeArray:0,
+      getTimeArray: 0,
     };
     const keyClass = this.props.navigation.state.params.keyClass;
     const idType = this.props.navigation.state.params.thamso;
     Global.router = this.state.router;
     Global.tittle = idType.className;
     console.log('in ra className', this.state.className_Attendance)
-
-
   }
-    checkGoToQrCode  (){
+  checkGoToQrCode = () => {
+var date = new Date();
+var seconds = Date.now();
+console.log('in ra đây xem cái thời gian khởi tạo cái datetime_seconds ', seconds)
+    
     const keyClass = this.props.navigation.state.params.keyClass;
     const idType = this.props.navigation.state.params.thamso;
     const { className_Attendance, timeCompare } = this.state;
     // console.log('in ra cái tên lớp trong didmout', this.state.className_Attendance)
     try {
-      console.log('in ra cái tên lớp trong didmout', this.state.className_Attendance)
-      
       console.log('in ra đường dẫn', firebase.database().ref().child(`Manage_Class/${keyClass}/Attendance/${this.state.datecurrent}`))
-       firebase.database().ref().child(`Manage_Class/${keyClass}/Attendance/${this.state.datecurrent}`)
-        .orderByChild('className').equalTo({ className_Attendance }).on('value', childSnapshot => {
-          const { value_Attdance,getTimeArray } = this.state;
-          // var getTimeArray = 0;
+      firebase.database().ref().child(`Manage_Class/${keyClass}/Attendance/${this.state.datecurrent}`)
+        .orderByChild('className').equalTo({ className_Attendance }).once('value', childSnapshot => {
+          const { value_Attdance, getTimeArray } = this.state;
           if (childSnapshot.exists()) {
             childSnapshot.forEach(doc => {
               value_Attdance.push({
-                key:doc.key,
+                key: doc.key,
                 className: doc.toJSON().className,
                 datetime: doc.toJSON().datetime,
-                //  className : (doc.val().className)
               });
             });
-            // console.log('in ra đây xem cái mảng', value_Attdance[0].datetime) 
-            console.log('in ra đây xem cái  key1 ', value_Attdance[0].key)
-
-            // const arrTimeGetDB = [];
-            // value_Attdance.forEach(e=>{
-            //   arrTimeGetDB.unshift({
-
-            //   })
-            // })
-            // for(let i = 0 ;)
-            // parseInt(value_Attdance[0].datetime) =  getTimeArray;
-            // this.setState({
-            //   getTimeArray:parseInt(value_Attdance[0].datetime)
-            // })
-            // console.log('getTimeArray',getTimeArray);
-            if ((parseInt(value_Attdance[0].datetime) + 60) < timeCompare) {
-            console.log('in ra đây xem cái mảng key 3',( value_Attdance[0].key).toString())
-              console.log('thời gian có thể truy cập vào QrCode là',(parseInt(timeCompare) + 60));
+            console.log('in ra đây xem cái thời gian lưu lần trước', value_Attdance[0].datetime)
+            console.log('in ra đây xem cái thời gian thực hiện lệnh ', seconds)
+            
+            if ((parseInt(value_Attdance[0].datetime) + 60000) < seconds) {
+              // console.log('in ra đây xem cái mảng key 3', (value_Attdance[0].key).toString())
+              console.log('thời gian có thể truy cập vào QrCode là', (parseInt(seconds) + 60000));
               this.props.navigation.navigate('QRcode', { thamso: idType, keyClass: keyClass })
             }
             else {
@@ -120,14 +105,13 @@ export default class CreateClass extends Component {
               this.props.navigation.navigate('Screen_Handle');
             }
           }
-
           // console.log('in ra đây xem cái mảng1', value_Attdance[0].datetime)
           // console.log('time hiện tại ở đây là ', timeCompare);
           // console.log('thời gian hết khóa', (parseInt(value_Attdance[0].datetime) + 50))
-        // })
-          else {
+          // })
+          // else {
             this.props.navigation.navigate('QRcode', { thamso: idType, keyClass: keyClass })
-          }
+          // }
           // if ((parseInt(value_Attdance[0].datetime) + 5000) <= timeCompare) {
           //   this.props.navigation.navigate('QRcode', { thamso: idType, keyClass: keyClass })
           // }
@@ -138,20 +122,15 @@ export default class CreateClass extends Component {
           //   );
           //   this.props.navigation.navigate('Screen_Handle');
           // }
-        // },
-        // console.log('in ra đây xem cái mảng1', value_Attdance[0].datetime)
-        
-        // );
+          // },
+          // console.log('in ra đây xem cái mảng1', value_Attdance[0].datetime)
+
+          // );
         })
-        }catch (e) {
+    } catch (e) {
       console.log('lỗi ở class Screen_Handle đây là ', e)
     }
-
   }
-  // checkGoToQrCode() {
-
-
-  // }
   pickSingleWithCamera(cropping, mediaType = 'photo') {
     ImagePicker.openCamera({
       cropping: cropping,
@@ -369,7 +348,7 @@ export default class CreateClass extends Component {
               <View style={styles.child_row}>
                 <View style={styles.children}>
                   <TouchableOpacity style={styles.styleTouch}
-                  onPress={()=>this.props.navigation.navigate('ListStudentAttendance',{ keyClass: keyClass, thamso: idType })}
+                    onPress={() => this.props.navigation.navigate('ListStudentAttendance', { keyClass: keyClass, thamso: idType })}
                   >
                     <View style={styles.styleImg}>
                       <Image source={icons_qr} style={{ width: '80%', height: '80%' }} />
@@ -386,7 +365,7 @@ export default class CreateClass extends Component {
                 </View>
                 <View style={styles.children}>
                   <TouchableOpacity style={styles.styleTouch}
-                    onPress={() => this.props.navigation.navigate('StudentAttendance',)}
+                    onPress={() => this.props.navigation.navigate('StudentAttendance')}
                   >
                     <View style={styles.styleImg}>
                       <Image source={icons_picture} style={{ width: '80%', height: '80%' }} />
@@ -397,6 +376,42 @@ export default class CreateClass extends Component {
                     </Text>
                       <Text style={{ fontSize: 15 }}>
                         Điểm Danh
+                    </Text>
+                    </View>
+                  </TouchableOpacity>
+                </View>
+              </View>
+              <View style={styles.child_row}>
+                <View style={styles.children}>
+                  <TouchableOpacity style={styles.styleTouch}
+                    onPress={() => this.props.navigation.navigate('DownloadExcel')}
+                  >
+                    <View style={styles.styleImg}>
+                      <Image source={icons_qr} style={{ width: '80%', height: '80%' }} />
+                    </View>
+                    <View style={styles.viewLable}>
+                      <Text style={{ fontSize: 15 }}>
+                       Download
+                    </Text>
+                      <Text style={{ fontSize: 15 }}>
+                        
+                      </Text>
+                    </View>
+                  </TouchableOpacity>
+                </View>
+                <View style={styles.children}>
+                  <TouchableOpacity style={styles.styleTouch}
+                    // onPress={() => this.props.navigation.navigate('StudentAttendance')}
+                  >
+                    <View style={styles.styleImg}>
+                      <Image source={icons_picture} style={{ width: '80%', height: '80%' }} />
+                    </View>
+                    <View style={styles.viewLable}>
+                      <Text style={{ fontSize: 15 }}>
+                        Test Chức Năng
+                    </Text>
+                      <Text style={{ fontSize: 15 }}>
+                        #
                     </Text>
                     </View>
                   </TouchableOpacity>

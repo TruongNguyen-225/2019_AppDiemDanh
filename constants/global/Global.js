@@ -24,4 +24,5 @@ module.exports ={
   dathamgia: null,
   listClassJoined:null,
   getKeyClassDone_Pass_Attendance:null,
+  ngaydiemdanh:null,
 };

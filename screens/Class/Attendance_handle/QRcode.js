@@ -18,6 +18,7 @@ import Tittle from '../../Header/Tittle';
 
 import QRCode from 'react-native-qrcode-svg';
 import CountDown from 'react-native-countdown-component';
+import {WToast} from 'react-native-smart-tip'
 
 const { width: WIDTH } = Dimensions.get('window');
 const { height: HEIGHT } = Dimensions.get('window');
@@ -35,18 +36,19 @@ var getTime = thoigian.getTime();
 var datecurrent = year + '-' + month + '-' + date;
 var time = hour + ':' + minutes + ':' + seconds;
 // var datetime = 'date and time attendance at ' + datecurrent;
-var datetime = parseInt(hour)*60*60 + parseInt(minutes)*60 + parseInt(seconds);
+var datetime = parseInt(hour) * 60 * 60 + parseInt(minutes) * 60 + parseInt(seconds);
 export default class CreateClass extends Component {
     static navigationOptions = {
         header: null,
-    }; 
+    };
     constructor(props) {
         super(props);
         this.state = {
             datecurrent: datecurrent,
             datetime: getTime,
             keyClassCurrent: null,
-            timeGetQrCode:datetime,
+            timeGetQrCode: datetime,
+            play:false,
             // time:time,
         };
         const idType = this.props.navigation.state.params.thamso;
@@ -56,8 +58,8 @@ export default class CreateClass extends Component {
         Global.siso = parseInt(idType.count);
     }
     componentDidMount() {
-        console.log('datetime bằng ',this.state.test);
-        console.log('time bằng ',this.state.time);
+        console.log('datetime bằng ', this.state.test);
+        console.log('time bằng ', this.state.time);
 
         const keyClass = this.props.navigation.state.params.keyClass;
         const idType = this.props.navigation.state.params.thamso;
@@ -79,89 +81,46 @@ export default class CreateClass extends Component {
         const idType = this.props.navigation.state.params.thamso;
         const keyClass = this.props.navigation.state.params.keyClass;
         const keyPath = this.props.navigation.state.params.key;
-        // console.log('keyPath',keyPath);
-        // console.log('path',
-        //     firebase.database().ref().child(`Manage_Class/${keyClass}/Attendance/${this.state.datecurrent}/${keyPath}`)
-        // )
-        // var keyNodeTimer = firebase.database().ref().child(`Manage_Class/${keyClass}/Attendance/${this.state.datecurrent}`).push().key
-        // console.log(`keyNodeTimer ${keyNodeTimer}`) 
+        var date = new Date();
+        var seconds = Date.now();
         try {
+
             await firebase.database().ref().child('Manage_Class').orderByChild('className')
                 .equalTo(Global.tittle)
-                .once('child_added', data => {
+                .on('child_added', data => {
                     data.key;
                     firebase.database().ref().child('Manage_Class').child(data.key)
                         .update({
                             _id: require('random-string')({ length: 10 }),
                         })
+                        .then(
+                            firebase.database().ref().child(`Manage_Class/${keyClass}/Attendance/${this.state.datecurrent}/-KHONGDUOCXOACAINAY`)
+                                .set({
+                                    // _id: require('random-string')({ length: 10 }),
+                                    className: `${idType.className}`,
+                                    datetime: `${seconds}`,
+                                })
+                        ).then(
+                            firebase.database().ref().child(`Manage_Class/${keyClass}/Attendance/${this.state.datecurrent}`).child(`-KHONGDUOCXOACAINAY`)
+                                .update({
+                                    datetime: `${seconds}`,
+                                })
+                        )
                         .catch(() => Alert('Có lỗi xảy ra !'));
                 });
-                await firebase.database().ref().child('Manage_Class').orderByChild('className')
-                .equalTo(Global.tittle)
-                .on('child_added', data => {
-                    data.key;
-                    // firebase.database().ref().child(`Manage_Class/${keyClass}/Attendance/${this.state.datecurrent}/-Ls10dqzJmdR2qXTp6No`)
-                    firebase.database().ref().child(`Manage_Class/${keyClass}/Attendance/${this.state.datecurrent}/-KHONGDUOCXOACAINAY`)
-                        .set({
-                            // _id: require('random-string')({ length: 10 }),
-                            className: `${idType.className}`,
-                            datetime: this.state.timeGetQrCode,
-                        })
-                        .catch(() => Alert('Có lỗi xảy ra !'));
-                });
-
-                await firebase.database().ref().child('Manage_Class').orderByChild('className')
-                .equalTo(Global.tittle)
-                .once('child_added', data => {
-                    data.key;
-                    firebase.database().ref().child(`Manage_Class/${keyClass}/Attendance/${this.state.datecurrent}`).child(`-KHONGDUOCXOACAINAY`)
-                        .update({
-                            // _id: require('random-string')({ length: 10 }),
-                            // className: `${idType.className}`,
-                            datetime: this.state.timeGetQrCode,
-                        })
-                        .catch(() => Alert('Có lỗi xảy ra !'));
-                });
-
-            // await firebase.database().ref().child('Manage_Class').orderByChild('className')
-            //     .equalTo(Global.tittle)
-            //     .once('child_added', data => {
-            //         data.key;
-            //         firebase.database().ref().child('Manage_Class/' + data.key + `/Attendance/${this.state.datecurrent}`)
-            //             .push({
-            //                 className: `${idType.className}`,
-            //                 datetime: this.state.timeGetQrCode,
-            //             })
-            //             .catch(() => Alert('Có lỗi xảy ra !'));
-            //     });
-            //     await firebase.database().ref().child('Manage_Class').orderByChild('className')
-            //     .equalTo(Global.tittle)
-            //     .on('child_added', data => {
-            //         data.key;
-            //         if(keyPath === "undefined" || keyPath === null )
-            //         {
-            //             console.log('CHẲNG LÀM GÌ CẢ')
-            //         }
-            //         else{
-            //             firebase.database().ref().child('Manage_Class/' + data.key + `/Attendance/${this.state.datecurrent}/${keyPath}`)
-            //             .update({
-            //                 // className: `${idType.className}`,
-            //                 datetime: this.state.timeGetQrCode,
-            //             })
-            //             .catch(() => Alert('Có lỗi xảy ra !'));
-            //         }
-                    
-            //     });
-
-
-            Alert.alert('Thông báo', 'Đã hết thời gian điểm danh , quay về màn hình Home !');
-            this.props.navigation.navigate('Loading');
-
-        } catch (e) {
+            Alert.alert('Thông báo', 'Cập nhật thông tin thành công !');
+            this.props.navigation.navigate('HomeScreen');
+        }
+        catch (e) {
             window.location.href = "http://stackoverflow.com/search?q=[js]+" + e.message;
         }
     }
-
+Play=async ()=>{
+    await this.setState({
+        play:true,
+    })
+    await WToast.show({data: 'Bắt đầu tính thời gian , nếu rời khỏi màn hình này , quá trình điểm danh sẽ bị hủy !'})
+}
     render() {
         const idType = this.props.navigation.state.params.thamso;
         const keyClass = this.props.navigation.state.params.keyClass;
@@ -185,12 +144,14 @@ export default class CreateClass extends Component {
                                 {/* <Text style={{fontFamily:'Simplifica'}}>Thời gian còn lại : 4:50:01</Text> */}
                                 <CountDown
                                     until={0 * 1 + 10}
+                                 
                                     size={23}
-                                    onFinish={() => { this.changeIDclass() }}
+                                    onFinish={() => this.changeIDclass()}
                                     digitStyle={{ backgroundColor: '#FFF' }}
                                     digitTxtStyle={{ color: '#1CC625' }}
                                     timeToShow={['M', 'S']}
                                     timeLabels={{ m: 'Phút', s: 'Giây', }}
+                                    running={this.state.play}
                                 />
                             </View>
                             <View style={{ flex: 1, }} />
@@ -203,9 +164,10 @@ export default class CreateClass extends Component {
                                     </TouchableOpacity>
                                 </View>
                                 <View>
-                                    <TouchableOpacity style={styles.btn1}>
+                                    <TouchableOpacity style={styles.btn1} 
+                                    onPress={this.Play.bind(this)}>
                                         <Text>
-                                            Button1
+                                            Bắt Đầu
                                         </Text>
                                     </TouchableOpacity>
                                 </View>

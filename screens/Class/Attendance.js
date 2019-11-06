@@ -119,7 +119,7 @@ export default class ExampleThree extends Component {
     };
     const keyClass = this.props.navigation.state.params.keyClass;
     const idType = this.props.navigation.state.params.thamso;
-
+    Global.siso = idType.count;
     Global.router = this.state.router;
     Global.tittle = idType.className;
   }
@@ -268,16 +268,6 @@ export default class ExampleThree extends Component {
           }}
           keyExtractor={(item, id) => item.id}
         />
-
-        <View style={styles.viewResult}>
-          <View style={styles.viewResultChild}>
-            <Text style={styles.textResult}>Total Student : 30</Text>
-            <Text style={styles.textResult}>Student Pass: 25</Text>
-          </View>
-          <View style={styles.viewResultChild}>
-            <Text style={styles.textResult}>Student Fail : 5</Text>
-          </View>
-        </View>
       </View>
     );
   }

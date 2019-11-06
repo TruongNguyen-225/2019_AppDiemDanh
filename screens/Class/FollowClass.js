@@ -246,12 +246,12 @@ this.props.navigation.navigate ('Loading');
           <View style={styles.viewResultChild}>
             <Text style={styles.textResult}>Sĩ Số :{Global.siso}</Text>
             <Text style={styles.textResult}>
-              Đã tham gia: {this.state.count}
+              Đã tham gia: {listStudent.length}
             </Text>
           </View>
           <View style={styles.viewResultChild}>
             <Text style={styles.textResult}>
-              Chưa tham gia : {Global.siso - this.state.count}
+              Chưa tham gia : {Global.siso -listStudent.length}
             </Text>
           </View>
         </View>

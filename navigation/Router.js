@@ -38,10 +38,14 @@ import Update_Manage_Class from '../screens/Class/Update_Manage_Class';
 import ListStudentAttendance from '../screens/Class/ListStudentAttendance';
 import InitClass from '../screens/Class/InitClass';
 import ClassDone from '../screens/Class/ClassDone';
-import NativeBase from '../screens/Class/NativeBase';
+// import NativeBase from '../screens/Class/NativeBase';
 import QRcode from '../screens/Class/Attendance_handle/QRcode';
 import StudentAttendance from '../screens/Class/Attendance_handle/StudentAttendance';
-// import DownloadExcel from '../screens/Class/DownloadExcel';
+import DownloadExcel from '../screens/Class/DownloadExcel';
+// import ShowListDate from '../screens/Class/ShowListDate';
+// import ShowListStudentWithID from '../screens/Class/ShowListStudentWithID';
+import ListCLass_DateTime from '../screens/Class/ListCLass_DateTime';
+import ShowAllStudentWithResultSearch from '../screens/Class/ShowAllStudentWithResultSearch';
 // SEARCH
 import SearchScreen from '../screens/Search/SearchScreen';
 
@@ -82,10 +86,14 @@ export const RootStack = createStackNavigator (
     StudentAttendance,
     InitClass,
     ClassDone,
-    NativeBase,
+    // NativeBase,
     QRcode,
     ListStudentAttendance,
-    // DownloadExcel,
+    DownloadExcel,
+    // ShowListDate,
+    // ShowListStudentWithID,
+    ListCLass_DateTime,
+    ShowAllStudentWithResultSearch,
   },
   {
     initialRouteName: 'HomeScreen',

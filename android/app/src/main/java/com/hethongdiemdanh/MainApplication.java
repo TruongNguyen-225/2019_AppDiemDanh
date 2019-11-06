@@ -1,5 +1,4 @@
 package com.hethongdiemdanh;
-
 import android.app.Application;
 import android.content.Context;
 import com.facebook.react.PackageList;
@@ -32,6 +31,8 @@ public class MainApplication extends Application implements ReactApplication {
           packages.add(new RNFirebaseAuthPackage());
           packages.add(new RNFirebaseDatabasePackage());
           packages.add(new RNFirebaseStoragePackage());
+
+        
           return packages;
         }
 

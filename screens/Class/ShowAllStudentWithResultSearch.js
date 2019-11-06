@@ -102,62 +102,24 @@ export default class ListStudentAttendance extends Component {
       listHistory: [],
       listHistoryChild: [],
       datecurrent: datecurrent,
-      tittle: '',
+      tittle: "DANH SÁCH HS ĐÃ ĐIỂM DANH",
       router: 'HomeScreen',
-      keyClass:"",
     };
-    const idType = this.props.navigation.state.params.thamso;
-    const keyClass = this.props.navigation.state.params.keyClass;
-    // this.setState({
-    //   keyClass:keyClass
-    // });
-    // console.log("IN RA KEYCLASS",this.state.keyClass);
-
+    // const ngaydiemdanh = this.props.navigation.state.params.ngaydiemdanh;
+    // const keyClass = this.props.navigation.state.params.keyClass;
+    const infoClass = this.props.navigation.state.params.infoClass;
     Global.router = this.state.router;
-    Global.tittle = idType.className;
+    Global.tittle = this.state.tittle;
+    Global.siso = parseInt (infoClass.count);
   }
   componentDidMount() {
     this.getListStudent();
-    this.getListHistory();
   }
-  getListHistory() {
-    const idType = this.props.navigation.state.params.thamso;
-    const keyClass = this.props.navigation.state.params.keyClass;
-    var rootRef = firebase.database().ref();
-    var urlRef = rootRef.child(`Manage_Class/${keyClass}/Attendance`);
-
-    urlRef.once('value').then((snapshot) => {
-      const listHistory = [];
-      snapshot.forEach(doc => {
-        const listHistoryChild = [];
-        listHistory.push({
-          dateTimeAttendance: doc.key,
-          keyClass:this.props.navigation.state.params.keyClass,
-          infoClass: this.props.navigation.state.params.thamso,
-        })
-        doc.forEach(e => {
-          listHistoryChild.push({
-            email: e.toJSON().email,
-          })
-        })
-        this.setState({
-          listHistoryChild
-        })
-        console.log('IN RA XEM MANG CHILD  LISTHISTORY ', this.state.listHistoryChild)
-      });
-      this.setState({ listHistory: listHistory })
-      console.log('IN RA XEM MANG LISTHISTORY ', this.state.listHistory)
-    },
-
-    );
-  }
-
   getListStudent() {
     const keyClass = this.props.navigation.state.params.keyClass;
+    const ngaydiemdanh = this.props.navigation.state.params.ngaydiemdanh;
     var rootRef = firebase.database().ref();
-    var urlRef = rootRef.child(`Manage_Class/${keyClass}/Attendance/${this.state.datecurrent}`);
-    console.log('key truyền qua là', keyClass)
-    console.log('path-urlRef', urlRef.path);
+    var urlRef = rootRef.child(`Manage_Class/${keyClass}/Attendance/${ngaydiemdanh}`);
     urlRef.on('value', childSnapshot => {
       if (childSnapshot.exists()) {
         const listStudent = [];
@@ -180,19 +142,6 @@ export default class ListStudentAttendance extends Component {
       }
     });
   }
-
-  ExportExel = () => {
-    // const { listStudent }  = this.state
-    // console.log('IN RA DANH SÁCH HỌC SINH ĐÃ ĐƯỢC ĐIỂM DANH :',listStudent);
-    //  const json2csv = require('../../node_modules/csvjson-json2csv/json2csv');
-    // var csv = json2csv(this.state.listStudent);
-    // console.log(csv);
-
-    // // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
-    // var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-    // console.log('Upload is ' + progress + '% done');
-
-  }
   render() {
     const tableData = [];
     for (let i = 0; i < 20; i += 1) {
@@ -202,18 +151,12 @@ export default class ListStudentAttendance extends Component {
       }
       tableData.push(rowData);
     }
-    const idType = this.props.navigation.state.params.thamso;
-    const { listHistory } = this.state;
+    const ngaydiemdanh = this.props.navigation.state.params.ngaydiemdanh;
+    const infoClass = this.props.navigation.state.params.infoClass;
     return (
       <View style={styles.container}>
         <Tittle {...this.props} />
-        <View style={styles.viewCreateClass}>
-        <TouchableOpacity
-            onPress={()=>this.props.navigation.navigate('ListCLass_DateTime',{mangNgayDiemDanh:listHistory})}
-            style={{width: '100%', height: '100%', justifyContent: 'center'}}
-          >
-            <Text style={{textAlign: 'center'}}>Lấy QRCode</Text>
-          </TouchableOpacity>
+        {/* <View style={styles.viewCreateClass}>
           <TextInput
             style={styles.viewTextInput}
             keyboardType="default"
@@ -227,31 +170,31 @@ export default class ListStudentAttendance extends Component {
             value={this.state.txtSearch}
             onSelectionChange={() => this.onSearchNew()}
           />
-        </View>
+        </View> */}
         <View style={{ marginTop: 7 }}>
 
           <View style={[styles.header, { flexDirection: 'column', justifyContent: 'space-between', height: HEIGHT / 12 }]}>
             <View style={{ justifyContent: 'space-between', flexDirection: 'row', }}>
               <View style={{ width: '62%', borderWidth: 0, height: HEIGHT / 25, paddingLeft: 10 }}>
                 <Text>
-                  Lớp  : {idType.class}
+                  Lớp  : {infoClass.class}
                 </Text>
               </View>
               <View style={{ width: '38%', borderWidth: 0, height: HEIGHT / 25, paddingLeft: 0, }}>
                 <Text>
-                  Ngày : {this.state.datecurrent}
+                  Ngày : {ngaydiemdanh}
                 </Text>
               </View>
             </View>
             <View style={{ justifyContent: 'space-between', flexDirection: 'row', }}>
               <View style={{ width: '62%', borderWidth: 0, height: HEIGHT / 25, paddingLeft: 10 }}>
                 <Text>
-                  Môn : {idType.subject}
+                  Môn : {infoClass.subject}
                 </Text>
               </View>
               <View style={{ width: '38%', borderWidth: 0, height: HEIGHT / 25, paddingLeft: 0, }}>
                 <Text>
-                  Sĩ Số : {idType.count}
+                  Sĩ Số : {infoClass.count}
                 </Text>
               </View>
             </View>
@@ -295,11 +238,11 @@ export default class ListStudentAttendance extends Component {
         />
         <View style={styles.viewResult}>
           <View style={styles.viewResultChild}>
-            <Text style={styles.textResult}>Total Student : 30</Text>
-            <Text style={styles.textResult}>Student Pass: 25</Text>
+            <Text style={styles.textResult}>Sĩ Số : {infoClass.count}</Text>
+            <Text style={styles.textResult}>Đã Điểm Danh: {this.state.listStudent.length}</Text>
           </View>
           <View style={styles.viewResultChild}>
-            <Text style={styles.textResult}>Student Fail : 5</Text>
+            <Text style={[styles.textResult],{width:WIDTH*0.9}}>Vắng/Không Điểm Danh :{Global.siso - this.state.listStudent.length}</Text>
           </View>
         </View>
       </View>
@@ -315,8 +258,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   viewTextInput: {
+    // borderWidth:1,
     height: 40,
-    width: WIDTH * 0.25,
+    width: WIDTH*0.9 ,
     margin: 10,
     padding: 10,
     borderColor: 'green',
@@ -344,7 +288,7 @@ const styles = StyleSheet.create({
   textResult: {
     marginVertical: 5,
     fontSize: 15,
-    width: WIDTH * 0.4,
+    width: WIDTH * 0.5,
   },
   viewResultChild: {
     flexDirection: 'row',
