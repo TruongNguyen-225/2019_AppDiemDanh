@@ -18,7 +18,7 @@ export default class Tittle extends Component {
   render () {
     return (
       <View style={styles.content}>
-        <StatusBar backgroundColor="#2196f3" barStyle="light-content" />
+        <StatusBar backgroundColor="#4bb1eb" barStyle="light-content" />
         <OfflineNotice />
         <View style={styles.contentChild}>
           <TouchableOpacity
@@ -47,12 +47,10 @@ const styles = StyleSheet.create ({
   content: {
     height: HEIGHT / 20,
     // backgroundColor: '#03a9f4',
-    backgroundColor:'#2196f3',
-
+    // backgroundColor:'#2196f3',
+    backgroundColor:'#4bb1eb',
     flexDirection: 'row',
     alignItems:'center',
-    // justifyContent:'space-between'
-
   },
   contentChild: {
     height: 45,
@@ -77,7 +75,7 @@ const styles = StyleSheet.create ({
   rowAbout: {
     height: HEIGHT / 20,
     width:WIDTH *0.18,
-    backgroundColor: '#2196f3',
+    backgroundColor: '#4bb1eb',
     justifyContent: 'center',
     flexDirection: 'row',
   },

@@ -299,6 +299,7 @@ const styles = StyleSheet.create ({
     paddingHorizontal: 20,
     borderBottomColor: '#f1f1f1',
     borderBottomWidth: 0,
-    backgroundColor: 'rgba(140, 200, 214,0.8)',
+    // backgroundColor: 'rgba(140, 200, 214,0.8)',
+    backgroundColor:'#fff'
   },
 });

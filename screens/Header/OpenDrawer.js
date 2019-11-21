@@ -43,7 +43,7 @@ const styles = StyleSheet.create ({
     width: WIDTH * 0.13,
     height: HEIGHT / 12,
     // backgroundColor: '#03a9f4',
-    backgroundColor:'#2196f3',
+    backgroundColor:'#4bb1eb',
     // paddingBottom: 8,
     paddingTop: (HEIGHT / 12 - HEIGHT / 20) / 2,
 

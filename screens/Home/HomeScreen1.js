@@ -183,7 +183,6 @@ export default class HomeScreen extends Component {
               'Lớp học này đã tồn tại , hãy kiểm tra lại !',
             );
           } else {
-            // var pathKey = system.push().key
             system
               .push({
                 _id: require('random-string')({length: 10}),
@@ -196,7 +195,6 @@ export default class HomeScreen extends Component {
                 teacher: this.state.userData.fullName,
                 member: this.state.member,
               })
-              // console.log('lopws hojc mowi dc tao cos path la :',pathClass)
               .then(
                 this.setState({
                   count: '',
@@ -217,19 +215,16 @@ export default class HomeScreen extends Component {
     const viewFlatList = (
       <FlatList
         data={this.state.classClosed}
-        // numColumns={5}
         renderItem={({item, index}) => {
           return (
             <TouchableHighlight
               style={styles.viewFlatList}
-              // onPress={() => this.props.navigation.navigate ('FollowClass')}
               onPress={async () => {
                 await this.props.navigation.navigate('FollowClass', {
                   listStudent: this.state.listStudent,
                   thamso: this.props.item,
                 });
               }}
-              // onPress={() => {this.props.navigation.navigate ('Screen_Handle',{thamso:item})}}
             >
               <View style={{flexDirection: 'row', alignItems: 'center'}}>
                 <Image source={school} style={{width: 50, height: 50}} />
@@ -253,16 +248,14 @@ export default class HomeScreen extends Component {
     return (
       <View style={{flex: 1}}>
         <OfflineNotice style={{flex: 1}} />
-        <StatusBar backgroundColor="#2196f3" barStyle="light-content" />
+        <StatusBar backgroundColor="#4bb1eb" barStyle="light-content" />
         <View style={{flexDirection: 'row'}}>
           <OpenDrawer {...this.props} />
           <Search_TextInput
-            // {...this.props}
             onGoToSearch={() => this.props.navigation.navigate('SearchScreen')}
           />
         </View>
         <View style={styles.content}>
-         {/* <Image source ={logoapp} style={{width:'100%',height:'20%',marginTop:10,}}/> */}
           <View style={styles.content_child}>
             <ScrollView>
               <View style={styles.child_row}>
@@ -332,7 +325,7 @@ export default class HomeScreen extends Component {
                       <Image source={icons_add} style={{width: '80%', height: '80%'}} />
                     </View>
                     <Text style={{fontSize: 15, flexWrap: 'wrap'}}>
-                      Hướng Dẫn Sử Dụng
+                      Tạo Lớp Mới
                     </Text>
                   </TouchableOpacity>
                 </View>
