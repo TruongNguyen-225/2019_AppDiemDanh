@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import {
   View,
   Text,
-  StatusBar,
   Image,
   FlatList,
   TouchableOpacity,
@@ -15,19 +14,16 @@ import firebase from 'react-native-firebase';
 import AsyncStorage from '@react-native-community/async-storage';
 import Global from '../../constants/global/Global';
 import OfflineNotice from '../Header/OfflineNotice';
-
 import Swipeout from 'react-native-swipeout';
+import Tittle from '../Header/Tittle';
+
 import search from '../../assets/icons/icons8-search-96.png';
 import filter from '../../assets/icons/icons8-filter-96.png';
-
 import school from '../../assets/icons/icons8-abc-96.png';
 import left from '../../assets/icons/left.png';
 
-import Tittle from '../Header/Tittle';
-
 const { width: WIDTH } = Dimensions.get('window');
 const { height: HEIGHT } = Dimensions.get('window');
-
 var system = firebase.database().ref().child('Manage_Class');
 
 class FlatListItem extends Component {
@@ -38,41 +34,6 @@ class FlatListItem extends Component {
       listStudent: [],
       textFail: '',
     };
-  }
-  componentDidMount() {
-    this.getListStudent();
-  }
-  getListStudent() {
-    var rootRef = firebase.database().ref();
-    var urlRef = rootRef.child('Manage_Class/' + this.props.item.key+'/StudentJoin');
-    console.log ('path-urlRef', urlRef.path);
-    urlRef.once('value', childSnapshot => {
-      if (childSnapshot.exists()) {
-        const listStudent = [];
-        childSnapshot.forEach(doc => {
-          var stt = 0;
-          if (typeof doc.toJSON().email != 'undefined') {
-            stt = 1;
-          }
-          if (stt == 1) {
-            listStudent.push({
-              email: doc.toJSON().email,
-              MSSV: doc.toJSON().MSSV,
-              id: doc.toJSON().id,
-            });
-          }
-        });
-        this.setState({
-          listStudent: listStudent.sort((a, b) => {
-            return a.className < b.className;
-          }),
-        });
-        console.log('kết quả ', this.state.listStudent);
-      }
-    });
-  }
-  showInfoClass() {
-    alert("chưa làm kịp :v")
   }
   render() {
     const swipeSettings = {
@@ -88,7 +49,6 @@ class FlatListItem extends Component {
       right: [
         {
           onPress: () => {
-            //  this.showInfoClass()
             this.props.navigation.navigate('Update_Manage_Class', { thamso: this.props.item })
           },
           text: 'Chỉnh Sửa TT Lớp',
@@ -133,74 +93,32 @@ class FlatListItem extends Component {
 
     return (
       <Swipeout {...swipeSettings}>
-        <View
-          style={{
-            flex: 1,
-            flexDirection: 'row',
-            // backgroundColor: this.props.index % 2 == 0 ? 'mediumseagreen': 'tomato' ,
-            // justifyContent:'space-between',
-            // alignItems:'center',
-            backgroundColor: "#fff",
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-        >
+        <View style={{flex: 1, flexDirection: 'row',backgroundColor: "#fff",alignItems: 'center',justifyContent: 'center' }}>
           <TouchableOpacity
             style={style.viewFlatList}
             onPress={async () => {
               await this.props.navigation.navigate('FollowClass', {
-                listStudent: this.state.listStudent,
                 thamso: this.props.item,
               });
             }}
           >
-            <View
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                flex: 1,
-              }}
-            >
+            <View style={{flexDirection: 'row', alignItems: 'center',justifyContent: 'space-between',flex: 1}}>
               <View style={{ width: 50, height: 50, borderWidth: 0, borderRadius: 999, alignItems: 'center', justifyContent: 'center', }}>
                 <Image source={school} style={{ width: 50, height: 50 }} />
               </View>
               <View style={{ justifyContent: 'flex-start', width: WIDTH * 0.73, borderWidth: 0, paddingLeft: 25, }}>
-                <Text
-                  style={{
-                    fontSize: 14,
-                    fontWeight: '700',
-                    opacity: .7,
-                  }}
-                >
+                <Text  style={{fontSize: 14,fontWeight: '700',opacity: .7 }}>
                   {this.props.item.className}
                 </Text>
-                <Text style={{
-                  fontSize: 12,
-                  fontWeight: '700',
-                  fontStyle: 'italic',
-                  color: '#448aff',
-                }}>
-                  {this.props.item.isChecked}
+                <Text style={{fontSize: 12,fontWeight: '700',fontStyle: 'italic',color: '#448aff'}}>
+                  {this.props.item.isChecked === 0 ? <Text>Đang Xử Lý</Text> : this.props.item.isChecked === 1 ? <Text>Lớp Đã Chốt , Có Thể Điểm Danh</Text> :<Text></Text>}
                 </Text>
                 <Text style={{ fontSize: 12, color: '#455a64', fontStyle: 'italic' }}>{this.props.item.time}</Text>
-
               </View>
-              {/* <View style={{justifyContent: 'flex-start', width: WIDTH * 0.25 , borderWidth:0,paddingLeft:5,}}>
-               <Text style={{fontSize:12, color:'#455a64',fontWeight:'700'}}>{this.props.item.datecurrent}</Text>
-               <Text style={{fontSize:12, color:'#455a64',}}>{this.props.item.time}</Text>
-              </View> */}
-              <Image
-                source={left}
-                style={{
-                  width: 20,
-                  height: 20,
-                  tintColor: '#333',
-                  marginRight: 15,
-                }}
+              <Image  source={left}
+                style={{width: 20,height: 20,tintColor: '#333',marginRight: 15,}}
               />
             </View>
-
           </TouchableOpacity>
         </View>
       </Swipeout>
@@ -208,11 +126,6 @@ class FlatListItem extends Component {
   }
 }
 const style = StyleSheet.create({
-  flatListItem: {
-    color: 'white',
-    padding: 10,
-    fontSize: 16,
-  },
   viewFlatList: {
     flexDirection: 'row',
     height: HEIGHT / 9,
@@ -224,15 +137,7 @@ const style = StyleSheet.create({
     width: WIDTH * 0.97,
     backgroundColor: '#fff'
   },
-  styleText: {
-    fontSize: 12,
-    color: 'gray',
-    // paddingLeft:15,
-  }
 });
-var pathClass = null;
-var count = 0;
-var ListClass = [];
 
 export default class CreateClass extends Component {
   static navigationOptions = {
@@ -260,7 +165,6 @@ export default class CreateClass extends Component {
       router: 'HomeScreen',
       tittle: 'DANH SÁCH LỚP ĐANG XỬ LÝ',
     };
-    // this._onPressAdd = this._onPressAdd.bind (this);
     Global.arrayClass = this.state.class;
     Global.tittle = this.state.tittle;
   }
@@ -296,7 +200,6 @@ export default class CreateClass extends Component {
             loading: true,
           });
         });
-        // console.log('classRoom ', this.state.class);
       });
   }
   getUserData = async () => {
@@ -316,7 +219,6 @@ export default class CreateClass extends Component {
         if (snapshot.exists()) {
           snapshot.forEach(doc => {
             dataResult.push({
-              // text:`Kết quả tìm kiếm của ${txtSearch_Split} :`,
               className: doc.toJSON().className,
             });
           });
@@ -324,7 +226,6 @@ export default class CreateClass extends Component {
             dataResult: dataResult.sort((a, b) => {
               return a.date < b.date;
             }),
-            // stateEmpty:false,
             textInputSearch: this.state.txtSearch,
             count: dataResult.length,
             txtSearch: '',
@@ -332,12 +233,10 @@ export default class CreateClass extends Component {
           });
         } else {
           dataResult.push({
-            // img: <Image source={loser} style={{width:200, height:300}}/>,
             textFail: `Không thấy kết quả nào phù hợp với ${this.state.txtSearch}!`,
           });
           this.setState({
             textInputSearch: this.state.txtSearch,
-            // stateEmpty:false,
             resultFail: true,
             txtSearch: '',
           });
@@ -353,10 +252,7 @@ export default class CreateClass extends Component {
     {
       if( arrayInitClass[i].className.toString().includes(key))
       {
-        // arrSearch.push(arrayInitClass[i]);
         arrayInitClass = arrayInitClass[i];
-        // this.state.class = this.state.class[i];
-        console.log('kết quả tìm kiếm là ', arrayInitClass)
       }
       else
       {
@@ -403,24 +299,11 @@ export default class CreateClass extends Component {
       // console.log('set ngược lại cho class', this.state.listClassNew)
     }
     console.log("key =========",arrayInitClass);
-
   }
-//   $(document).ready(function() {
-//     $('#myInput').on('keyup', function(event) {
-//        event.preventDefault();
-//        /* Act on the event */
-//        var tukhoa = $(this).val().toLowerCase();
-//        $('#myTable tr').filter(function() {
-//           $(this).toggle($(this).text().toLowerCase().indexOf(tukhoa)>-1);
-//        });
-//     });
-//  });
   render() {
     const { currentUser } = this.state;
     return (
       <View style={{ flex: 1, marginTop: Platform.OS === 'ios' ? 34 : 0 }}>
-        {/* <StatusBar backgroundColor="#03a9f4" barStyle="light-content" /> */}
-        <OfflineNotice />
         <Tittle {...this.props} />
         <View style={styles.viewCreateClass}>
           <TouchableOpacity
@@ -454,7 +337,6 @@ export default class CreateClass extends Component {
         <FlatList
           style={{ width: WIDTH * 0.97, borderWidth: 0, marginVertical: 5, marginHorizontal: 5 }}
           data={this.state.class}
-          // data={arrayInitClass}
           renderItem={({ item, index }) => {
             return (
               <FlatListItem
@@ -467,25 +349,11 @@ export default class CreateClass extends Component {
           }}
           keyExtractor={(item, id) => item.id}
         />
-        <TouchableOpacity 
-        // onPress={() =>
-          // this.onSearchNew()
-        // }
-        >
-          <Text>Test</Text>
-        </TouchableOpacity>
       </View>
     );
   }
 }
 const styles = StyleSheet.create({
-  // viewCreateClass: {
-  //   backgroundColor: '#fff',
-  //   flexDirection: 'row',
-  //   justifyContent: 'flex-end',
-  //   alignItems: 'center',
-  //   height: 64,
-  // },
   viewTextInput: {
     height: 40,
     width: WIDTH * 0.65,
@@ -504,46 +372,5 @@ const styles = StyleSheet.create({
     borderBottomColor: '#f1f1f1',
     borderBottomWidth: 1,
     backgroundColor: 'rgba(140, 200, 214,0.8)',
-  },
-  rowCreateClass: {
-    flexDirection: 'row',
-    height: HEIGHT / 11,
-    borderBottomWidth: 1,
-    borderBottomColor: '#fff',
-    paddingLeft: 20,
-    backgroundColor: '#f1f1f1',
-  },
-  viewImgIcon: {
-    justifyContent: 'center',
-  },
-  viewText: {
-    height: HEIGHT / 11,
-    justifyContent: 'center',
-  },
-  viewHiden: {
-    backgroundColor: 'red',
-    height: 64,
-    width: WIDTH,
-  },
-  textDirector: {
-    fontSize: 15,
-    fontWeight: 'normal',
-    margin: 10,
-    paddingLeft: 5,
-    // alignSelf:'flex-start',
-    // position: 'absolute',
-
-  },
-
-  follow: {
-    height: 50,
-    backgroundColor: '#fff',
-    borderColor: '#039be5',
-    borderRadius: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
-    width: WIDTH * 0.8,
-    marginHorizontal: (WIDTH - WIDTH * 0.8) / 2,
-    marginVertical: 20,
   },
 });

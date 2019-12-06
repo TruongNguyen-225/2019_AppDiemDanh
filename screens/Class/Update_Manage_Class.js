@@ -2,25 +2,17 @@ import React, { Component } from 'react';
 import {
   Text,
   View,
-  FlatList,
-  StatusBar,
   TouchableOpacity,
   StyleSheet,
   Dimensions,
   TextInput,
   Alert,
 } from 'react-native';
-
-import ScrollableTabView, {
-  ScrollableTabBar,
-} from 'react-native-scrollable-tab-view';
+import DatePicker from 'react-native-datepicker';
 import AsyncStorage from '@react-native-community/async-storage';
 import firebase from 'react-native-firebase';
 import Tittle from '../Header/Tittle';
 import Global from '../../constants/global/Global';
-// const RootRef = firebase.database ().ref ().child ('Manage_Class');
-const rootRef = firebase.database().ref();
-const system = rootRef.child('Manage_Class');
 
 const { width: WIDTH } = Dimensions.get('window');
 const { height: HEIGHT } = Dimensions.get('window');
@@ -39,6 +31,9 @@ export default class Update_Manage_Class extends Component {
       count: '',
       tittle: 'CHỈNH SỬA THÔNG TIN LỚP',
       router: 'CreateClass',
+      numberTarget:0,
+      dateFinish:'',
+      dateStart:'',
     };
     Global.tittle = this.state.tittle;
     Global.router = this.state.router;
@@ -49,10 +44,7 @@ export default class Update_Manage_Class extends Component {
     await this.setState({ currentUser });
     await this.getUserData();
     this.setState({
-      // subject: idType.subject,
       class: idType.class,
-      // count: idType.count,
-      // className: idType.className,
     })
   }
   getUserData = async () => {
@@ -64,47 +56,49 @@ export default class Update_Manage_Class extends Component {
   };
   async updateClass() {
     const idType = this.props.navigation.state.params.thamso;
+    // var className = this.state.newClassName.concat(' - ').concat(this.state.subject).toUpperCase();
     var checkRegExp = /^[0-9]*$/;
-
     if (
       this.state.newClassName.trim() === '' ||
       this.state.subject.trim() === '' ||
-      this.state.count.trim() === ''
+      this.state.count.trim() === '' ||
+      this.state.numberTarget.trim() === '' ||
+      this.state.dateStart.trim() === '' ||
+      this.state.dateFinish.trim() === ''
     ) {
       Alert.alert('Lỗi', 'Các trường phải được điền đầy đủ !');
       return;
     } else if (checkRegExp.test(this.state.count) == false) {
-      Alert.alert('Lỗi', 'Sĩ số không đúng định dạng  !');
+      Alert.alert('Lỗi', 'Sĩ số chỉ chấp nhận là chữ số nguyên !');
+      return;
+    }else if (checkRegExp.test(this.state.numberTarget) == false) {
+      Alert.alert('Lỗi', 'Số tín chỉ là chữ số nguyên !');
       return;
     }
+    // else if (this.state.dateStart.getTime() > this.state.dateFinish.getTime()) {
+    //   Alert.alert('Lỗi', 'Ngày kết thúc không thể nhỏ hơn hoặc bằng ngày bắt đầu học !');
+    //   return;
+    // }
     try {
-      await firebase
-        .database()
-        .ref()
-        .child('Manage_Class')
-        .orderByChild('className')
-        .equalTo(idType.className)
-        .on('child_added', data => {
+      await firebase.database().ref().child('Manage_Class').orderByChild('className').equalTo(idType.className).on('child_added', data => {
           data.key;
-          firebase
-            .database()
-            .ref()
-            .child('Manage_Class')
-            .child(data.key)
-            .update({
+          firebase.database().ref().child('Manage_Class').child(data.key).update({
               class: this.state.newClassName,
               subject: this.state.subject,
               count: this.state.count,
-              className: this.state.newClassName
-                .concat(' - ')
-                .concat(this.state.subject)
-                .toUpperCase(),
+              className: this.state.newClassName.concat(' - ').concat(this.state.subject).toUpperCase(),
+              dateFinish:this.state.dateFinish,
+              dateStart:this.state.dateStart,
+              numberTarget :this.state.numberTarget
             })
             .then(
               this.setState({
                 count: '',
                 subject: '',
                 newClassName: '',
+                dateFinish:'',
+                dateStart:'',
+                numberTarget:'',
               })
             )
             .catch(() => Alert('Có lỗi xảy ra !'));
@@ -112,8 +106,6 @@ export default class Update_Manage_Class extends Component {
 
       Alert.alert('Thông báo', 'Cập nhật thông tin thành công !');
       this.props.navigation.navigate('HomeScreen');
-      // }
-
     } catch (e) {
       window.location.href =
         'http://stackoverflow.com/search?q=[js]+' + e.message;
@@ -130,8 +122,7 @@ export default class Update_Manage_Class extends Component {
               <View style={styles.stylesLable}>
                 <Text>Lớp </Text>
               </View>
-              <TextInput
-                style={styles.viewTextInput}
+              <TextInput style={styles.viewTextInput}
                 keyboardType="default"
                 placeholderTextColor="gray"
                 fontStyle="italic"
@@ -147,8 +138,7 @@ export default class Update_Manage_Class extends Component {
               <View style={styles.stylesLable}>
                 <Text>Môn Học </Text>
               </View>
-              <TextInput
-                style={styles.viewTextInput}
+              <TextInput style={styles.viewTextInput}
                 keyboardType="default"
                 placeholderTextColor="gray"
                 fontStyle="italic"
@@ -164,8 +154,7 @@ export default class Update_Manage_Class extends Component {
               <View style={styles.stylesLable}>
                 <Text>Sĩ Số</Text>
               </View>
-              <TextInput
-                style={styles.viewTextInput}
+              <TextInput  style={styles.viewTextInput}
                 keyboardType="default"
                 placeholderTextColor="gray"
                 fontStyle="italic"
@@ -177,18 +166,80 @@ export default class Update_Manage_Class extends Component {
                 value={this.state.count}
               />
             </View>
-            <View
-              style={{
-                alignItems: 'center',
-                height: HEIGHT / 8,
-                justifyContent: 'center',
-                paddingTop: 220,
-              }}>
-              <TouchableOpacity
-                style={styles.bigButton}
-                onPress={() => {
-                  this.updateClass();
-                }}>
+            <View style={styles.rowInput}>
+              <View style={styles.stylesLable}>
+                <Text>Tín Chỉ</Text>
+              </View>
+              <TextInput  style={styles.viewTextInput}
+                keyboardType="default"
+                placeholderTextColor="gray"
+                fontStyle="italic"
+                placeholder={idType.numberTarget}
+                autoCapitalize="none"
+                onChangeText={text => {
+                  this.setState({ numberTarget: text });
+                }}
+                value={this.state.numberTarget}
+              />
+              
+          </View>
+          <View style={styles.viewTime}>
+                <View style = { styles.viewTimeChild}>
+                    <Text style={{marginBottom:7, fontStyle:'italic',color:'gray'}}>Ngày bắt đầu </Text>
+                    <DatePicker
+                      style={{
+                        width: WIDTH * 0.42,
+                        marginHorizontal:3,
+                        backgroundColor: '#fff',
+                      }}
+                      date={idType.dateStart}
+                      mode="date"
+                      placeholder="dd/mm/yyyy"
+                      format="DD-MM-YYYY"
+                      minDate="01-01-2019"
+                      maxDate="01-01-2100"
+                      confirmBtnText="Confirm"
+                      cancelBtnText="Cancel"
+                      showIcon={false}
+                      customStyles={{
+                        dateIcon: {position: 'absolute',right: 0,top: 4, marginLeft: 0 },
+                        dateInput: {},                    
+                      }}
+                      onDateChange={date => {
+                        this.setState ({date: date, dateStart: date});
+                      }}
+                    />
+                </View>
+                <View style = { styles.viewTimeChild}>
+                <Text style={{marginBottom:7, fontStyle:'italic',color:'gray'}}>Ngày kết thúc</Text>
+                    <DatePicker
+                      style={{
+                        width: WIDTH * 0.42,
+                        marginHorizontal:3,
+                        backgroundColor: '#fff',
+                      }}
+                      date={idType.dateFinish}
+                      mode="date"
+                      placeholder="dd/mm/yyyy"
+                      format="DD-MM-YYYY"
+                      minDate="01-01-2019"
+                      maxDate="01-01-2100"
+                      confirmBtnText="Confirm"
+                      cancelBtnText="Cancel"
+                      showIcon={false}
+                      customStyles={{
+                        dateIcon: {position: 'absolute',right: 0,top: 4, marginLeft: 0 },
+                        dateInput: {},                    
+                      }}
+                      onDateChange={date => {
+                        this.setState ({date: date, dateFinish: date});
+                      }}
+                    />
+                </View>
+            </View>
+            <View style={{ alignItems: 'center', height: HEIGHT / 8, justifyContent: 'flex-end',flexDirection:'column',marginTop:25,}}>
+              <TouchableOpacity style={styles.bigButton}
+                onPress={() => { this.updateClass();  }}>
                 <Text style={styles.buttonText}>Cập Nhật Thông Tin</Text>
               </TouchableOpacity>
             </View>
@@ -222,15 +273,12 @@ const styles = StyleSheet.create({
     borderTopColor: '#dddddd',
     borderBottomColor: '#dddddd',
     borderRightWidth: 0,
-
-
   },
   styleContent: {
     backgroundColor: '#fff',
     width: WIDTH * 0.96,
     borderRadius: 5,
     alignItems: 'center',
-    // justifyContent:'center',
     paddingTop: 60,
     flex: 1,
     marginVertical: 7,
@@ -239,11 +287,9 @@ const styles = StyleSheet.create({
   viewTextInput: {
     height: HEIGHT / 13,
     width: WIDTH * 0.65,
-    // margin: 10,
     padding: 10,
     borderColor: 'rgba(112, 119, 127, 0.3)',
     borderWidth: 1,
-    // borderBottomWidth:1,
     backgroundColor: '#fff',
   },
   bigButton: {
@@ -260,5 +306,24 @@ const styles = StyleSheet.create({
     fontFamily: 'Avenir',
     color: '#fff',
     fontWeight: '400',
+  },
+  viewTime:{
+    width:'100%',
+    height:'auto',
+    flexDirection:'row',
+    paddingVertical:1,
+    justifyContent:'flex-start',
+    marginBottom:7,
+    alignItems:'center',
+    justifyContent:'center',
+    height:75,
+  },
+  viewTimeChild:{
+    width:'45%',
+    height:'auto',
+    marginHorizontal:3,
+    justifyContent:'center',
+    alignItems:'center',
+ 
   },
 });

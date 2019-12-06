@@ -16,7 +16,7 @@ import logo from '../../assets/images/Logo_login.png';
 const {width: WIDTH} = Dimensions.get ('window');
 const {height: HEIGHT} = Dimensions.get ('window');
 
-const RootRef = firebase.database ().ref ().child ('members');
+const RootRef = firebase.database ().ref ().child ('Account_Teacher');
 let id = require ('random-string') ({length: 10});
 export default class SignUp extends Component {
   static navigationOptions = {
@@ -27,7 +27,7 @@ export default class SignUp extends Component {
     email: '',
     password: '',
     errorMessage: null,
-    MSSV: '',
+    MSGV: '',
     fullName: '',
     numberPhone: '',
     address: '',
@@ -35,6 +35,8 @@ export default class SignUp extends Component {
     sex: '',
     avt: [],
     proofs: [{_id: id}],
+    school:'',
+
   };
   componentDidMount () {
     this.unsubcriber = firebase.auth ().onAuthStateChanged (changedUser => {
@@ -54,37 +56,12 @@ export default class SignUp extends Component {
       Alert.alert ('Thông báo', 'Email, Password không được bỏ trống');
       return;
     }
-    firebase
-      .auth ()
-      .createUserWithEmailAndPassword (this.state.email, this.state.password)
-      .then (async () => {
-        const {
-          email,
-          id,
-          MSSV,
-          fullName,
-          numberPhone,
-          address,
-          dateBirthday,
-          sex,
-          avt,
-          proofs,
-        } = this.state;
-        const userData = {
-          email,
-          id,
-          MSSV,
-          fullName,
-          numberPhone,
-          address,
-          dateBirthday,
-          sex,
-          avt,
-          proofs,
-        };
+    firebase.auth ().createUserWithEmailAndPassword (this.state.email, this.state.password).then (async () => {
+        const {email,id,MSGV,fullName,numberPhone, address, dateBirthday, sex, avt, proofs,school} = this.state;
+        const userData = {email,numberPhone, id,  MSGV, fullName,  address, dateBirthday,sex, avt, proofs,school};
         RootRef.push (userData);
         await setItemToAsyncStorage ('userData', userData);
-        Alert.alert ('Thông báo', 'Đăng ký thành công\nTự động đăng nhập...');
+        Alert.alert ('Thông báo', 'Đăng ký tài khoản thành công !');
         this.props.navigation.navigate ('HomeScreen');
       })
       //dang ky that bai

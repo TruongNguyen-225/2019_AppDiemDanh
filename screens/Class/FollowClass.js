@@ -31,6 +31,7 @@ export default class CreateClass extends Component {
   constructor (props) {
     super (props);
     this.state = {
+      listStudent:[],
       dataArray: [],
       class: [],
       newClassName: '',
@@ -57,13 +58,34 @@ export default class CreateClass extends Component {
     // alert(idType.count)
   }
   componentDidMount () {
-
-    // Global.router = this.state.router;
-    this.getDataFromDB ();
-    const listStudent = this.props.navigation.state.params.listStudent;
-  //  console.log('nhận listStudent',listStudent.length)
-  //  console.log('siso tai đây',Global.siso)
-   if( listStudent.length == Global.siso)
+    // this.getDataFromDB ();
+    const thamso = this.props.navigation.state.params.thamso;
+    var rootRef = firebase.database().ref();
+    var urlRef = rootRef.child('Manage_Class/' + thamso.key+'/StudentJoin');
+    urlRef.once('value', childSnapshot => {
+    if (childSnapshot.exists()) {
+      const listStudent = [];
+      childSnapshot.forEach(doc => {
+        var stt = 0;
+        if (typeof doc.toJSON().email != 'undefined') {
+          stt = 1;
+        }
+        if (stt == 1) {
+          listStudent.push({
+            email: doc.toJSON().email,
+            MSSV: doc.toJSON().MSSV,
+            id: doc.toJSON().id,
+          });
+        }
+      });
+      this.setState({
+        listStudent: listStudent.sort((a, b) => {
+          return a.className < b.className;
+        }),
+      });
+    }
+  });
+   if( this.state.listStudent.length == Global.siso)
    {
      this.setState({
       fullStudent: true,
@@ -126,8 +148,6 @@ export default class CreateClass extends Component {
     this.refs.addModal.showAddModal ();
   }
  async closeClass(){
-  const idType = this.props.navigation.state.params.thamso;
-  // console.log('path',firebase.database().ref().child(`Manage_Class/`+Global.tittle).path)
 try{
   await firebase.database().ref().child('Manage_Class').orderByChild ('className')
   .equalTo (Global.tittle)
@@ -170,8 +190,7 @@ this.props.navigation.navigate ('Loading');
       </View>
     )
     const showBtnCloseClass = this.state.fullStudent ? viewFullStudent : null
-    const idType = this.props.navigation.state.params.thamso;
-    const listStudent = this.props.navigation.state.params.listStudent;
+    const {listStudent} = this.state;
 
     return (
       <View style={{flex: 1, marginTop: Platform.OS === 'ios' ? 34 : 0}}>

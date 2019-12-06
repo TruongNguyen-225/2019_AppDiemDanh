@@ -23,7 +23,7 @@ import uuid from 'uuid/v4'; // Import UUID to generate UUID
 
 var ImagePicker = NativeModules.ImageCropPicker;
 
-const RootRef = firebase.database ().ref ().child ('members');
+const RootRef = firebase.database ().ref ().child ('Account_Teacher');
 
 import DatePicker from 'react-native-datepicker';
 import camera from '../../assets/icons/icons8-compact-camera-96.png';
@@ -36,8 +36,12 @@ var thoigian = new Date ();
 var date = thoigian.getDate ();
 var month = thoigian.getMonth () + 1;
 var year = thoigian.getFullYear ();
-
-var currentDay = year + '-' + month + '-' + date;
+if( date < 10)
+{
+  date = '0'+date;
+  console.log(date);
+}
+var currentDay = date + '-' + month + '-' + year;
 
 export default class Update_Info extends Component {
   static navigationOptions = {
@@ -53,7 +57,8 @@ export default class Update_Info extends Component {
       user: null,
       isAuthenticated: false,
       date: currentDay,
-      MSSV: '',
+      date_temp : currentDay,
+      MSGV: '',
       fullName: '',
       numberPhone: '',
       address: '',
@@ -74,6 +79,7 @@ export default class Update_Info extends Component {
     };
     Global.tittle = this.state.tittle;
     Global.router = this.state.router;
+    console.log('in ra ngày hiện tại ?', this.state.date);
   }
   async componentDidMount () {
     const {currentUser} = firebase.auth ();
@@ -100,7 +106,7 @@ export default class Update_Info extends Component {
           itemData = {
             id: doc.toJSON ().id,
             email: doc.toJSON ().email,
-            MSSV: doc.toJSON ().MSSV,
+            MSGV: doc.toJSON ().MSGV,
             fullName: doc.toJSON ().fullName,
             address: doc.toJSON ().numberPhone,
             proofs: doc.toJSON ().proofs,
@@ -126,7 +132,7 @@ export default class Update_Info extends Component {
   //           userData = {
   //         id: doc.toJSON ().id,
   //         email: doc.toJSON ().email,
-  //         MSSV: doc.toJSON ().MSSV,
+  //         MSGV: doc.toJSON ().MSGV,
   //         fullName: doc.toJSON ().fullName,
   //         address: doc.toJSON ().numberPhone,
   //         proofs: doc.toJSON ().proofs,
@@ -156,7 +162,7 @@ export default class Update_Info extends Component {
             userData = {
               email: doc.toJSON ().email,
               id: doc.toJSON ().id,
-              MSSV: doc.toJSON ().MSSV,
+              MSGV: doc.toJSON ().MSGV,
               fullName: doc.toJSON ().fullName,
               address: doc.toJSON ().numberPhone,
               proofs: doc.toJSON ().proofs,
@@ -191,7 +197,7 @@ checkFomart(){
 }
   async update () {
     const {
-      MSSV,
+      MSGV,
       fullName,
       address,
       numberPhone,
@@ -199,19 +205,16 @@ checkFomart(){
       sex,
     } = this.state;
     var checkRegExp = /((09|03|07|08|05)+([0-9]{8})\b)/g;
-    // var checkRegExp_Name = /^([A-Z])+([a-z])*$/;
-    // var checkRegExp_Name = /^[a-z ,.'-]+$/i;
     var checkRegExp_Name=  /^[a-z A-Z_ÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠàáâãèéêìíòóôõùúăđĩũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳỵỷỹ]+$/
     try {
       if (
-        MSSV != '' &&
+        MSGV != '' &&
         fullName != '' &&
         address != '' &&
         numberPhone != '' &&
         dateBirthday != '' &&
         sex != ''
       ) {
-        // if await this.checkFomart()
         if (checkRegExp.test (numberPhone) == false) {
           Alert.alert ('Lỗi', 'Số điện thoại không đúng định dạng  !');
           return;
@@ -229,7 +232,7 @@ checkFomart(){
               data.key;
               RootRef.child (data.key)
                 .update ({
-                  MSSV: this.state.MSSV,
+                  MSGV: this.state.MSGV,
                   fullName: this.state.fullName,
                   numberPhone: this.state.numberPhone,
                   address: this.state.address,
@@ -241,18 +244,17 @@ checkFomart(){
                   await AsyncStorage.clear ();
                   var userData = await this.getUserFromDB ();
                   setItemToAsyncStorage ('userData', userData);
-                  console.log ('LOL', userData);
+                  // console.log ('LOL', userData);
                 })
                 .catch (() => Alert ('Có lỗi xảy ra !'));
             });
           Alert.alert ('Thông báo', 'Cập nhật thông tin thành công !');
           this.props.navigation.navigate ('Main');
         }
-        
       } else {
         Alert.alert (
           'Lỗi Cập Nhật',
-          ' Vui lòng điền đầy đủ thông tin vào các trường'
+          ' Vui lòng điền đầy đủ thông tin vào các trường !'
         );
       }
     } catch (error) {
@@ -391,37 +393,6 @@ checkFomart(){
   render () {
     const {inputStyle, bigButton, buttonText, inputStyle1} = styles;
     const {email, currentUser} = this.state;
-    const viewHiden = (
-      <View>
-        <FlatList
-          horizontal={true}
-          // onTouchStart={() => {
-          //   this.onEnableScroll (false);
-          // }}
-          // onMomentumScrollEnd={() => {
-          //   this.onEnableScroll (true);
-          // }}
-          style={{borderWidth: 1, borderColor: 'green'}}
-          data={this.state.imagePickArray}
-          renderItem={({item, index}) => {
-            return (
-              <View style={styles.viewImg}>
-                <Image
-                  source={{uri: item.uri}}
-                  style={{
-                    width: '100%',
-                    height: '100%',
-                  }}
-                />
-              </View>
-            );
-          }}
-          keyExtractor={(item, uri) => item.uri}
-        />
-      </View>
-    );
-    const checkView = this.state.imagePickArray ? viewHiden : <View />;
-
     return (
       <View style={styles.container}>
         <Tittle {...this.props} />
@@ -444,7 +415,6 @@ checkFomart(){
               >
                 <Image source={camera} style={{height: 30, width: 30}} />
               </TouchableOpacity>
-
             </View>
             <View style={styles.viewTextInput}>
               <TextInput
@@ -452,14 +422,14 @@ checkFomart(){
                 placeholder=""
                 value={currentUser && currentUser.email}
                 editable={false}
-                // onChangeText={text => this.setState ({MSSV: text})}
+                // onChangeText={text => this.setState ({MSGV: text})}
               />
               <TextInput
                 style={inputStyle}
-                // placeholder={this.state.userData.MSSV}
-                placeholder="Nhập mã số sinh viên của bạn"
-                value={this.state.MSSV}
-                onChangeText={text => this.setState ({MSSV: text})}
+                // placeholder={this.state.userData.MSGV}
+                placeholder="Nhập mã số giảng viên của bạn"
+                value={this.state.MSGV}
+                onChangeText={text => this.setState ({MSGV: text})}
               />
               <TextInput
                 style={inputStyle}
@@ -471,7 +441,7 @@ checkFomart(){
               <TextInput
                 style={inputStyle}
                 // placeholder={this.state.userData.numberPhone}
-                placeholder="Nhập mã số điện thoại của bạn"
+                placeholder="Nhập số điện thoại của bạn"
                 value={this.state.numberPhone}
                 onChangeText={text => this.setState ({numberPhone: text})}
               />
@@ -491,32 +461,21 @@ checkFomart(){
                     <DatePicker
                       style={{
                         width: WIDTH * 0.5,
-                        // fontSize: 12,
                         backgroundColor: '#fff',
                       }}
                       date={this.state.date}
                       mode="date"
-                      placeholder="select date"
-                      format="YYYY-MM-DD"
-                      minDate="1900-01-01"
-                      maxDate="2030-01-01"
+                      placeholder="--Chọn ngày-tháng-năm -- "
+                      format="DD-MM-YYYY"
+                      minDate="01-01-1900"
+                      maxDate={this.state.date_temp}
                       confirmBtnText="Confirm"
                       cancelBtnText="Cancel"
                       showIcon={true}
                       customStyles={{
-                        dateIcon: {
-                          position: 'absolute',
-                          right: 0,
-                          top: 4,
-                          marginLeft: 0,
-                        },
-                        dateInput: {},
-
-                        // ... You can check the source to find the other keys.
+                        dateIcon: {position: 'absolute',right: 0,top: 4, marginLeft: 0 },
+                        dateInput: {},                    
                       }}
-                      // onDateChange={date => {
-                      //   this.setState ({dateBirthday: date});
-                      // }}
                       onDateChange={date => {
                         this.setState ({date: date, dateBirthday: date});
                       }}
@@ -543,38 +502,21 @@ checkFomart(){
                     onValueChange={(value, itemIndex) =>
                       this.setState ({sex: value})}
                   >
-                    <Picker.Item label=".: Chọn Giới Tính :." />
+                    <Picker.Item label="-- Chọn Giới Tính --" />
                     <Picker.Item label="Nam" value="nam" />
                     <Picker.Item label="Nữ" value="nữ" />
                   </Picker>
                 </View>
               </View>
-
-              <View style={styles.viewPicker}>
-                <View style={{width: WIDTH * 0.4, paddingLeft: 30}}>
-                  <Text style={{color: '#597D9A'}}>Upload Hình </Text>
-                </View>
-
-                <TouchableOpacity onPress={this.pickMultiple}>
-                  <Text style={{color: '#597D9A'}}>UpLoad Img </Text>
-                </TouchableOpacity>
-              </View>
-              {checkView}
             </View>
           </ScrollView>
         </View>
         <View
-          style={{
-            alignItems: 'center',
-            height: HEIGHT / 8,
-            justifyContent: 'center',
-          }}
+          style={{alignItems: 'center', height: HEIGHT / 8,justifyContent: 'center',}}
         >
           <TouchableOpacity
             style={bigButton}
-            onPress={() => {
-              this.update ();
-            }}
+            onPress={() => {this.update ()}}
           >
             <Text style={buttonText}>Cập Nhật Thông Tin</Text>
           </TouchableOpacity>
@@ -586,9 +528,7 @@ checkFomart(){
 const styles = StyleSheet.create ({
   container: {
     flex: 1,
-    // backgroundColor: '#f1f1f1',
     backgroundColor: 'rgba(112, 119, 127, 0.3)',
-
   },
   containerChild: {
     backgroundColor: '#fff',
@@ -599,7 +539,6 @@ const styles = StyleSheet.create ({
     height: HEIGHT - HEIGHT * 0.185 - HEIGHT / 20,
     borderTopLeftRadius:5,
     borderTopRightRadius:5,
-
   },
   viewHeader: {
     height: 130,
@@ -632,8 +571,6 @@ const styles = StyleSheet.create ({
     width: WIDTH * 0.9,
     height: 50,
     borderRadius: 30,
-    borderWidth: 1,
-    borderColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: '#0093c4',
@@ -650,23 +587,6 @@ const styles = StyleSheet.create ({
     height: 45,
     backgroundColor: '#03a9f4',
     flexDirection: 'row',
-  },
-  contentChild: {
-    height: 45,
-    width: WIDTH / 10,
-    paddingHorizontal: 20,
-    justifyContent: 'center',
-  },
-  viewText: {
-    height: 45,
-    width: 140,
-    marginLeft: (WIDTH - WIDTH / 10 - 140 - 40) / 2,
-    justifyContent: 'center',
-  },
-  styleText: {
-    color: 'white',
-    textAlign: 'center',
-    fontSize: 15,
   },
   uploadAvatar: {
     height: 60,
@@ -689,7 +609,6 @@ const styles = StyleSheet.create ({
     backgroundColor: '#90caf9',
   },
   textDateTime: {
-    // marginTop: -15,
     paddingLeft: 30,
     width: 100,
   },
@@ -710,10 +629,6 @@ const styles = StyleSheet.create ({
     marginBottom: 10,
     backgroundColor: '#90caf9',
   },
-  instructions: {
-    textAlign: 'center',
-    color: '#333333',
-  },
   viewTextPicker: {
     paddingLeft: 30,
     width: 100,
@@ -723,23 +638,11 @@ const styles = StyleSheet.create ({
     borderColor: '#999',
     marginLeft: 30,
   },
-  viewHiden: {
-    height: heightViewImg,
-    width: WIDTH * 0.9,
-    alignItems: 'center',
-    borderWidth: 1,
-  },
   viewImg: {
     margin: 2,
     height: heightViewImg,
     width: WIDTH * 0.23,
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  viewButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 10,
   },
 });

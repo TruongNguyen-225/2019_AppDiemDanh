@@ -11,8 +11,6 @@ import {  createDrawerNavigator } from 'react-navigation-drawer'
 import {Dimensions,Image} from 'react-native';
 import React from 'react';
 
-const {width: WIDTH} = Dimensions.get ('window');
-const {height: HEIGHT} = Dimensions.get ('window');
 
 import home from '../assets/icons/icons8-home-page-90.png';
 import user from '../assets/icons/icons8-user-menu-male-100.png';
@@ -33,19 +31,17 @@ import Detail_Class from '../screens/Class/Detail_Class';
 import FollowClass from '../screens/Class/FollowClass';
 import ListClass from '../screens/Class/ListClass';
 import Main from '../screens/HandleAuthentication/Main';
-import AddModal from '../screens/Class/AddModal';
 import Update_Manage_Class from '../screens/Class/Update_Manage_Class';
 import ListStudentAttendance from '../screens/Class/ListStudentAttendance';
 import InitClass from '../screens/Class/InitClass';
 import ClassDone from '../screens/Class/ClassDone';
-// import NativeBase from '../screens/Class/NativeBase';
 import QRcode from '../screens/Class/Attendance_handle/QRcode';
 import StudentAttendance from '../screens/Class/Attendance_handle/StudentAttendance';
 import DownloadExcel from '../screens/Class/DownloadExcel';
-// import ShowListDate from '../screens/Class/ShowListDate';
-// import ShowListStudentWithID from '../screens/Class/ShowListStudentWithID';
 import ListCLass_DateTime from '../screens/Class/ListCLass_DateTime';
 import ShowAllStudentWithResultSearch from '../screens/Class/ShowAllStudentWithResultSearch';
+import My_Profile from '../screens/Class/My_Profile';
+
 // SEARCH
 import SearchScreen from '../screens/Search/SearchScreen';
 
@@ -94,6 +90,7 @@ export const RootStack = createStackNavigator (
     // ShowListStudentWithID,
     ListCLass_DateTime,
     ShowAllStudentWithResultSearch,
+    My_Profile,
   },
   {
     initialRouteName: 'HomeScreen',
