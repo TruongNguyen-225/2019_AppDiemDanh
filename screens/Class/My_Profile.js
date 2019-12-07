@@ -11,6 +11,9 @@ import {
     Dimensions,
     Linking,
 } from 'react-native';
+import Speedometer from 'react-native-speedometer-chart';
+import AsyncStorage from '@react-native-community/async-storage';
+
 import Tittle from '../Header/Tittle';
 import Global from '../../constants/global/Global';
 import email from '../../assets/icons/icons8-email-64.png';
@@ -21,7 +24,6 @@ import birthday from '../../assets/icons/icons8-birthday-64.png';
 import mssv from '../../assets/icons/icons8-identification-documents-64.png';
 import name from '../../assets/icons/icons8-name-64.png';
 
-const {width: WIDTH} = Dimensions.get ('window');
 const {height: HEIGHT} = Dimensions.get ('window');
 const HEADER_MAX_HEIGHT = 300;
 const HEADER_MIN_HEIGHT = Platform.OS === 'ios' ? 60 : 40;
@@ -43,14 +45,18 @@ export default class My_Profile extends Component {
             loading: false,
             refesh: false,
             userData:{},
+            arrListAttendance:[],
+            listHistoryChild:[],
         };
         Global.router = this.state.router;
         Global.tittle = this.state.tittle
     }
     _renderScrollViewContent() {
         const info = this.props.navigation.state.params.info;
-        console.log('user',info.email)
-        // const data = Array.from({ length: 30 });
+        const infoClass = this.props.navigation.state.params.infoClass;
+        // const arrListAttendance = this.props.navigation.state.params.arrListAttendance;
+        const listHistoryChild = this.props.navigation.state.params.listHistoryChild;
+        var tongsotiethoc = (infoClass.numberTarget)*15;
         return (
             <View style={styles.scrollViewContent}>
                 <View style={styles.row}>
@@ -75,27 +81,52 @@ export default class My_Profile extends Component {
                 </View>
                 <View style={styles.row}>
                     <Image source={phone} style={{height:30,width:30,}}/> 
-                    {/* <TouchableOpacity onPress={this.makeCall}> */}
+                    <TouchableOpacity onPress={this.makeCall}>
                         <Text style={{paddingHorizontal:20,color:'blue',opacity:.8}}>{info.numberPhone}</Text>
-                     {/* </TouchableOpacity> */}
+                     </TouchableOpacity>
                 </View>
                 <View style={styles.row}>
                     <Image source={sex} style={{height:30,width:30,}}/> 
                     <Text style={{paddingHorizontal:20,color:'black',opacity:.8}}>{info.sex}</Text>
                 </View>
+                <View style={{justifyContent:'center',alignItems:'center'}}>
+                <View style={[styles.row,{borderBottomColor:'white',paddingLeft:0,}]}>
+                    <Text>Sơ đồ điểm danh</Text>
+                </View>
+                    <Speedometer
+                        value={listHistoryChild.length}
+                        totalValue={30}
+                        size={250}
+                        outerColor="#d3d3d3"
+                        internalColor="#ff0000"
+                        showText
+                        text={`${listHistoryChild.length}/${tongsotiethoc}`}
+                        textStyle={{ color: 'green' }}
+                        showLabels
+                        labelStyle={{ color: 'blue' }}
+                        showPercent
+                        percentStyle={{ color: 'red' }}
+                    />
+                </View>
             </View>
         );
     }
-    // makeCall = () => {
-    // const infoStudent = this.props.navigation.state.params.infoStudent;
-    // let phoneNumber = ''
-    // if (Platform.OS === 'android') {
-    //     phoneNumber = `tel:${infoStudent.numberPhone}`;
-    //   } else {
-    //     phoneNumber = `telprompt:${infoStudent.numberPhone}`;
-    //   }
-    //     Linking.openURL(phoneNumber);
-    //   };
+    getUserData = async () => {
+        await AsyncStorage.getItem ('userData').then (value => {
+          const userData = JSON.parse (value);
+          this.setState ({userData: userData});
+        });
+      };
+    makeCall = () => {
+    const infoStudent = this.props.navigation.state.params.infoStudent;
+    let phoneNumber = ''
+    if (Platform.OS === 'android') {
+        phoneNumber = `tel:${infoStudent.numberPhone}`;
+      } else {
+        phoneNumber = `telprompt:${infoStudent.numberPhone}`;
+      }
+        Linking.openURL(phoneNumber);
+      };
     render() {
         const info = this.props.navigation.state.params.info;
         const scrollY = Animated.add(
@@ -190,8 +221,9 @@ export default class My_Profile extends Component {
                             },
                         ]}
                     >
-                        {/* <Text style={styles.title}>{info.email}</Text> */}
+                        <Text style={styles.title}>{info.email}</Text>
                     </Animated.View>
+                    
                 </View>
             </View>
         );
@@ -236,7 +268,7 @@ const styles = StyleSheet.create({
     },
     title: {
         color: 'white',
-        fontSize: 18,
+        fontSize: 20,
     },
     scrollViewContent: {
         // iOS uses content inset, which acts like padding.

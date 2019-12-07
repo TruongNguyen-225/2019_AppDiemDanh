@@ -8,12 +8,10 @@ import {
   TouchableOpacity,
   StyleSheet,
   Dimensions,
-  Alert,
   TextInput,
 } from 'react-native';
 import firebase from 'react-native-firebase';
 import AsyncStorage from '@react-native-community/async-storage';
-// import {getKeyClassDone_Pass_Attendance } from '../../constants/global/Global';
 import Global from '../../constants/global/Global';
 import OfflineNotice from '../Header/OfflineNotice';
 import search from '../../assets/icons/icons8-search-96.png';
@@ -23,9 +21,7 @@ import Tittle from '../Header/Tittle';
 
 const {width: WIDTH} = Dimensions.get ('window');
 const {height: HEIGHT} = Dimensions.get ('window');
-
 var system = firebase.database ().ref ().child ('Manage_Class');
-
 class FlatListItem extends Component {
   constructor (props) {
     super (props);
@@ -36,66 +32,20 @@ class FlatListItem extends Component {
       getKey:null,
       globalTemp:null,
     };
-    // Global.getKeyClassDone_Pass_Attendance = this.state.getKey;
   }
   componentDidMount () {
-    // this.getListStudent ();
     this.getKey();
   }
   getKey(){
     this.setState({
       getKey: this.props.item.key,
-      // getKeyClassDone_Pass_Attendance : this.props.item.key,
     })
-    console.log(`key của ${this.props.item.className} là : `,this.getKey)
-
   }
-  // getListStudent () {
-  //   var rootRef = firebase.database ().ref ();
-  //   var urlRef = rootRef.child ('Manage_Class/' + this.props.item.key);
-  //   // console.log ('path-urlRef', urlRef.path);
-  //   urlRef.once ('value', childSnapshot => {
-  //     if (childSnapshot.exists ()) {
-  //       const listStudent = [];
-  //       childSnapshot.forEach (doc => {
-  //         var stt=0;
-  //         if (typeof doc.toJSON().email!= 'undefined') {
-  //           stt=1;
-  //         }
-  //         if (stt==1)
-  //         {
-  //           listStudent.push ({
-  //             email: doc.toJSON ().email,
-  //             MSSV: doc.toJSON ().MSSV,
-  //             id: doc.toJSON ().id,
-  //           });
-  //         }
-  //       });
-  //       this.setState ({
-  //         listStudent: listStudent.sort ((a, b) => {
-  //           return a.className < b.className;
-  //         }),
-  //       });
-  //       // console.log ('kết quả ', this.state.listStudent);
-  //     }
-  //   });
-  // }
-  // showInfoClass(){
-  //   alert("chưa làm kịp :v")
-  // }
   render () {
     return (
       <View style={ style.viewOneClass}>
         <TouchableOpacity
           style={style.viewFlatList}
-          // onPress={async () => {
-          //   await this.props.navigation.navigate('FollowClass', {
-          //     listStudent: this.state.listStudent,
-          //     thamso: this.props.item,
-          //   }
-          //   );
-          // }}
-          // onPress={()=> this.props.navigation.navigate('Attendance',{keyClass: this.state.getKey})}
           onPress={()=> this.props.navigation.navigate('Screen_Handle',{keyClass: this.state.getKey,thamso: this.props.item,})}
 
         >
@@ -143,8 +93,6 @@ styleText: {
   color: 'gray',
 }
 });
-var pathClass = null;
-var count= 0;
 export default class CreateClass extends Component {
   static navigationOptions = {
     header: null,
@@ -171,7 +119,6 @@ export default class CreateClass extends Component {
       router: 'HomeScreen',
       tittle: 'DANH SÁCH LỚP ĐÃ CHỐT',
     };
-    // this._onPressAdd = this._onPressAdd.bind (this);
     Global.arrayClass = this.state.class;
     Global.tittle = this.state.tittle;
   }
@@ -202,14 +149,8 @@ export default class CreateClass extends Component {
         });
         this.setState ({
           class: classRoom
-          // .sort ((a, b) => {
-          //   return a.className > b.className;
-          // }
-          // ),
-          // loading: true,
         });
       });
-      // console.log ('classRoom ', this.state.class);
     });
   }
   getUserData = async () => {
@@ -219,13 +160,9 @@ export default class CreateClass extends Component {
     });
   };
   render () {
-    const {currentUser} = this.state;
     return (
       <View style={styles.container}>
-        <StatusBar backgroundColor="#03a9f4" barStyle="light-content" />
-        <OfflineNotice />
         <Tittle {...this.props} />
-        
         <View style={styles.viewCreateClass}>
           <TouchableOpacity
             style={{ marginRight: 10 }}
@@ -299,7 +236,6 @@ const styles = StyleSheet.create ({
     paddingHorizontal: 20,
     borderBottomColor: '#f1f1f1',
     borderBottomWidth: 0,
-    // backgroundColor: 'rgba(140, 200, 214,0.8)',
     backgroundColor:'#fff'
   },
 });

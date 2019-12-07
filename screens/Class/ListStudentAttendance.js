@@ -14,17 +14,62 @@ class FlatListItem extends Component {
       listStudent: [],
       textFail: '',
       getKey: null,
+      datecurrent:datecurrent,
+      list_MSSV_Joined:[],
+      listHistoryChild:[],
+      check:false,
     };
   }
-  render() {
-    const tableData = [];
-    for (let i = 0; i < 20; i += 1) {
-      const rowData = [];
-      for (let j = 0; j < 5; j += 1) {
-        rowData.push(`${i}${j}`);
+  componentDidMount() {
+    const idType = this.props.navigation.state.params.thamso;
+
+    const keyClass = this.props.navigation.state.params.keyClass;
+    var rootRef = firebase.database().ref();
+    var urlRef = rootRef.child('Manage_Class/' + keyClass + '/StudentJoin');
+    console.log('key truyền qua là', keyClass)
+    console.log('path-urlRef', urlRef.path);
+    urlRef.once('value', childSnapshot => {
+      if (childSnapshot.exists()) {
+        const listHistoryChild = [];
+        const list_MSSV_Joined = [];
+        childSnapshot.forEach(doc => {
+          var stt = 0;
+          if (typeof doc.toJSON().email != 'undefined') {
+            stt = 1;
+          }
+          if (stt == 1) {
+            list_MSSV_Joined.push(doc.toJSON().MSSV);
+          }
+        });
+        this.setState({
+          list_MSSV_Joined:list_MSSV_Joined,
+        });
+        firebase.database().ref('Manage_Class/'+idType.key+'/Attendance/2019-12-1').orderByChild('MSSV').on('value',(value)=>{
+          if(value.exists()){
+            value.forEach(element =>{
+              if( typeof element.val().MSSV != 'undefined'){
+                listHistoryChild.push(element.val().MSSV)
+              }
+              // this.setState({listHistoryChild:listHistoryChild})
+            })
+            this.setState({listHistoryChild:listHistoryChild})
+            console.log('in ra list', this.state.listHistoryChild)
+          }
+      })
       }
-      tableData.push(rowData);
-    }
+    });
+
+  }
+
+  render() {
+    const {listHistoryChild,list_MSSV_Joined}  = this.state;
+    
+    // for(var i=0;i<listHistoryChild.length;i++){
+    //   if(list_MSSV_Joined.includes(listHistoryChild[i])){
+    //     this.setState({check:true})
+    //   }
+    // }
+  
     return (
       <View style={style.viewOneClass}>
         <TouchableOpacity
@@ -32,7 +77,7 @@ class FlatListItem extends Component {
         >
           <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', flex: 1, }}>
             <View style={[styles.styleColumn, { flex: 1, borderLeftWidth: 0.5, borderLeftColor: 'gray', }]}>
-              <Text>1</Text>
+              <Text>{(this.props.index)+1}</Text>
             </View>
             <View style={[styles.styleColumn, { flex: 3, }]}>
               <Text style={{ fontSize: 12, fontWeight: '700', opacity: .7, }}>
@@ -46,7 +91,7 @@ class FlatListItem extends Component {
             </View>
             <View style={[styles.styleColumn, { flex: 1, }]}>
               <Text style={{ fontSize: 12, fontWeight: '700', opacity: .7, }}>
-                ✔
+                {/* {list_MSSV_Joined} */}
                 </Text>
             </View>
           </View>
@@ -82,15 +127,12 @@ const style = StyleSheet.create({
 
 });
 var thoigian = new Date();
+
 var date = thoigian.getDate();
 var month = thoigian.getMonth() + 1;
 var year = thoigian.getFullYear();
-var hour = thoigian.getHours();
-var minutes = thoigian.getMinutes();
-var seconds = thoigian.getSeconds();
-
 var datecurrent = year + '-' + month + '-' + date;
-var time = hour + ':' + minutes + ':' + seconds;
+
 export default class ListStudentAttendance extends Component {
   static navigationOptions = {
     header: null,
@@ -99,6 +141,8 @@ export default class ListStudentAttendance extends Component {
     super(props);
     this.state = {
       listStudent: [],
+      listStudent_Joined:[],
+      list_MSSV_Joined:[],
       listHistory: [],
       listHistoryChild: [],
       datecurrent: datecurrent,
@@ -107,22 +151,18 @@ export default class ListStudentAttendance extends Component {
       keyClass:"",
     };
     const idType = this.props.navigation.state.params.thamso;
-    const keyClass = this.props.navigation.state.params.keyClass;
-    // this.setState({
-    //   keyClass:keyClass
-    // });
-    // console.log("IN RA KEYCLASS",this.state.keyClass);
-
     Global.router = this.state.router;
     Global.tittle = idType.className;
   }
   componentDidMount() {
     this.getListStudent();
     this.getListHistory();
+    this.getListStudent_Joined();
   }
   getListHistory() {
     const idType = this.props.navigation.state.params.thamso;
     const keyClass = this.props.navigation.state.params.keyClass;
+    console.log('in ra keyClass',keyClass)
     var rootRef = firebase.database().ref();
     var urlRef = rootRef.child(`Manage_Class/${keyClass}/Attendance`);
 
@@ -151,7 +191,45 @@ export default class ListStudentAttendance extends Component {
 
     );
   }
-
+  getListStudent_Joined() {
+    const keyClass = this.props.navigation.state.params.keyClass;
+    var rootRef = firebase.database().ref();
+    var urlRef = rootRef.child('Manage_Class/' + keyClass + '/StudentJoin');
+    console.log('key truyền qua là', keyClass)
+    console.log('path-urlRef', urlRef.path);
+    urlRef.once('value', childSnapshot => {
+      if (childSnapshot.exists()) {
+        const listStudent_Joined = [];
+        const list_MSSV_Joined = [];
+        childSnapshot.forEach(doc => {
+          var stt = 0;
+          if (typeof doc.toJSON().email != 'undefined') {
+            stt = 1;
+          }
+          if (stt == 1) {
+            list_MSSV_Joined.push(doc.toJSON().MSSV);
+            listStudent_Joined.push({
+              email: doc.toJSON().email,
+              MSSV: doc.toJSON().MSSV,
+              id: doc.toJSON().id,
+              address: doc.toJSON().address,
+              dateBirthday:doc.toJSON().dateBirthday,
+              fullName:doc.toJSON().fullName,
+              numberPhone:doc.toJSON().numberPhone,
+              sex:doc.toJSON().sex,
+              avt:doc.toJSON().proofs[0]["url"],
+            });
+          }
+        });
+        this.setState({
+          listStudent_Joined: listStudent_Joined.sort((a, b) => {
+            return a.className < b.className;
+          }),
+          list_MSSV_Joined:list_MSSV_Joined,
+        });
+      }
+    });
+  }
   getListStudent() {
     const keyClass = this.props.navigation.state.params.keyClass;
     var rootRef = firebase.database().ref();
@@ -279,7 +357,7 @@ export default class ListStudentAttendance extends Component {
         </View>
 
         <FlatList
-          data={this.state.listStudent}
+          data={this.state.listStudent_Joined}
           style={{ marginVertical: 0, }}
           renderItem={({ item, index }) => {
             return (

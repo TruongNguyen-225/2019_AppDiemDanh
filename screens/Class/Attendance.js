@@ -20,28 +20,51 @@ class FlatListItem extends Component {
       listStudent: [],
       textFail: '',
       getKey: null,
+      listHistoryChild:[],
+      arrListAttendance:[],
+      tongsongaydiemdanh:null,
+      songaydiemdanh:null,
     };
   }
   componentDidMount() {
-  }
-  render() {
-    const tableData = [];
-    for (let i = 0; i < 20; i += 1) {
-      const rowData = [];
-      for (let j = 0; j < 5; j += 1) {
-        rowData.push(`${i}${j}`);
+    const idType = this.props.navigation.state.params.thamso;
+    firebase.database().ref('Manage_Class/'+idType.key+'/Attendance').on('value',(value)=>{
+      if(value.exists()){
+        console.log('numberChild',value.numChildren());
+        const arrListAttendance = [];
+        const listHistoryChild = [];
+        value.forEach(doc => {
+          arrListAttendance.push({
+            dateTimeAttendance: doc.key,
+          })
+        });
+        this.setState({ arrListAttendance: arrListAttendance })
+        arrListAttendance.forEach(x=>{
+            var ngaydiemdanh = x.dateTimeAttendance ;
+            firebase.database().ref('Manage_Class/'+idType.key+'/Attendance/'+ngaydiemdanh).orderByChild('MSSV').equalTo(this.props.item.MSSV).on('value',(value)=>{
+                if(value.exists()){
+                  listHistoryChild.push(value);
+                }
+                this.setState({listHistoryChild:listHistoryChild,songaydiemdanh:listHistoryChild.length})
+            })
+        })
       }
-      tableData.push(rowData);
-    }
+      this.setState({tongsongaydiemdanh :(value.numChildren())})
+    })
+  }
+
+  render() {
+    const { tongsongaydiemdanh,songaydiemdanh ,arrListAttendance,listHistoryChild} = this.state;
+  var songayvang =  tongsongaydiemdanh - songaydiemdanh ;
     return (
       <View style={style.viewOneClass}>
         <TouchableOpacity
           style={style.viewFlatList}
-          onPress={() => this.props.navigation.navigate('Attendance', { keyClass: this.state.getKey })}
+          onPress={() => this.props.navigation.navigate('My_Profile', { info: this.props.item ,infoClass: this.props.navigation.state.params.thamso,listHistoryChild:listHistoryChild,arrListAttendance:arrListAttendance})}
         >
           <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', flex: 1, }}>
             <View style={[styles.styleColumn, { flex: 1, borderLeftWidth: 0.5, borderLeftColor: 'gray', }]}>
-              <Text>1</Text>
+            <Text>{this.props.index+1}</Text>
             </View>
             <View style={[styles.styleColumn, { flex: 3, }]}>
               <Text style={{ fontSize: 12, fontWeight: '700', opacity: .7, }}>
@@ -53,14 +76,9 @@ class FlatListItem extends Component {
                 {this.props.item.email}
               </Text>
             </View>
-            <View style={[styles.styleColumn, { flex: 1, }]}>
-              <Text style={{ fontSize: 12, fontWeight: '700', opacity: .7, }}>
-                ?
-                </Text>
+               {songayvang>=3 ? <View style={[styles.styleColumn, { flex: 1, backgroundColor:'yellow',color:'white'}]}>
+               <Text style={{ fontSize: 12, fontWeight: '700', opacity: .7, }}>{songayvang}</Text></View>: <View style={[styles.styleColumn, { flex: 1}]}><Text>{songayvang}</Text></View>}
             </View>
-          </View>
-
-
         </TouchableOpacity>
       </View>
     );
@@ -80,10 +98,7 @@ const style = StyleSheet.create({
   viewFlatList: {
     flexDirection: 'row',
     height: HEIGHT / 15,
-    // borderBottomColor: 'gray',
-    // borderBottomWidth: 1,
     width: WIDTH,
-    // paddingLeft: 10,
     alignItems: 'center',
     width: WIDTH * 0.97,
     backgroundColor: '#fff'
@@ -117,7 +132,7 @@ export default class ExampleThree extends Component {
       tittle: '',
       router: 'HomeScreen',
     };
-    const keyClass = this.props.navigation.state.params.keyClass;
+    // const keyClass = this.props.navigation.state.params.keyClass;
     const idType = this.props.navigation.state.params.thamso;
     Global.siso = idType.count;
     Global.router = this.state.router;
@@ -145,6 +160,12 @@ export default class ExampleThree extends Component {
               email: doc.toJSON().email,
               MSSV: doc.toJSON().MSSV,
               id: doc.toJSON().id,
+              address: doc.toJSON().address,
+              dateBirthday:doc.toJSON().dateBirthday,
+              fullName:doc.toJSON().fullName,
+              numberPhone:doc.toJSON().numberPhone,
+              sex:doc.toJSON().sex,
+              avt:doc.toJSON().proofs[0]["url"],
             });
           }
         });
@@ -153,28 +174,27 @@ export default class ExampleThree extends Component {
             return a.className < b.className;
           }),
         });
-        // console.log ('kết quả ', this.state.listStudent);
       }
     });
   }
   render() {
-    const state = this.state;
-    const tableData = [];
-    for (let i = 0; i < 20; i += 1) {
-      const rowData = [];
-      for (let j = 0; j < 5; j += 1) {
-        rowData.push(`${i}${j}`);
-      }
-      tableData.push(rowData);
-    }
-    const keyClass = this.props.navigation.state.params.keyClass;
+    // const state = this.state;
+    // const tableData = [];
+    // for (let i = 0; i < 20; i += 1) {
+    //   const rowData = [];
+    //   for (let j = 0; j < 5; j += 1) {
+    //     rowData.push(`${i}${j}`);
+    //   }
+    //   tableData.push(rowData);
+    // }
+    // const keyClass = this.props.navigation.state.params.keyClass;
     const idType = this.props.navigation.state.params.thamso;
 
     return (
       <View style={styles.container}>
         {/* <Tittle onGoBack={() => this.props.navigation.goBack ()} /> */}
         <Tittle {...this.props} />
-        <View style={styles.viewCreateClass}>
+        {/* <View style={styles.viewCreateClass}>
           <TouchableOpacity
             style={{ marginRight: 10 }}
             underlayColor="tomato"
@@ -202,14 +222,14 @@ export default class ExampleThree extends Component {
           >
             <Image style={{ width: 30, height: 30 }} source={search} />
           </TouchableOpacity>
-        </View>
+        </View> */}
         <View style={{ marginTop: 7 }}>
 
           <View style={[styles.header, { flexDirection: 'column', justifyContent: 'space-between', height: HEIGHT / 12 }]}>
             <View style={{ justifyContent: 'space-between', flexDirection: 'row', }}>
               <View style={{ width: '62%', borderWidth: 0, height: HEIGHT / 25, paddingLeft: 10 }}>
                 <Text>
-                  Lớp  : {idType.class}
+                  Lớp  : {idType.class.toUpperCase()}
                 </Text>
               </View>
               <View style={{ width: '38%', borderWidth: 0, height: HEIGHT / 25, paddingLeft: 0, }}>
@@ -221,7 +241,7 @@ export default class ExampleThree extends Component {
             <View style={{ justifyContent: 'space-between', flexDirection: 'row', }}>
               <View style={{ width: '62%', borderWidth: 0, height: HEIGHT / 25, paddingLeft: 10 }}>
                 <Text>
-                  Môn : {idType.subject}
+                  Môn : {idType.subject.toUpperCase()}
                 </Text>
               </View>
               <View style={{ width: '38%', borderWidth: 0, height: HEIGHT / 25, paddingLeft: 0, }}>
@@ -231,7 +251,7 @@ export default class ExampleThree extends Component {
               </View>
             </View>
           </View>
-          <View style={styles.header}>
+          <View style={[styles.header,{opacity:.8,}]}>
             <View style={[styles.styleColumn, { flex: 1, }]}>
               <Text >STT</Text>
             </View>
@@ -247,7 +267,7 @@ export default class ExampleThree extends Component {
             </View>
             <View style={[styles.styleColumn, { flex: 1 }]}>
               <Text style={{ fontSize: 12, fontWeight: '700', opacity: .7, }}>
-                AT
+                Vắng
                 </Text>
             </View>
           </View>

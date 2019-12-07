@@ -34,6 +34,7 @@
     "react-native-screens": "^1.0.0-alpha.23",
     "react-native-scrollable-tab-view": "^0.10.0",
     "react-native-smart-tip": "^2.0.1",
+    "react-native-speedometer-chart": "^0.7.3",
     "react-native-svg": "^9.11.1",
     "react-native-swipeout": "^2.3.6",
     "react-native-table-component": "^1.2.1",
