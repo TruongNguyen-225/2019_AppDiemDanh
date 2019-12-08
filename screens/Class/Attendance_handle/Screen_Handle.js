@@ -3,16 +3,13 @@ import {
   View,
   Text,
   StatusBar,
-  TextInput,
-  Image,
-  FlatList,
-  // TouchableHighlight,
   TouchableOpacity,
   StyleSheet,
   Dimensions,
   ScrollView,
   NativeModules,
   Alert,
+  Image
 } from 'react-native';
 import firebase from 'react-native-firebase';
 var ImagePicker = NativeModules.ImageCropPicker;
@@ -24,6 +21,7 @@ import icons_add from '../../../assets/icons/icons_document.png';
 import icons_qr from '../../../assets/icons/icons_qrCode.png';
 import icons_picture from '../../../assets/icons/icons_picture.png';
 import icons_checked from '../../../assets/icons/camera-circle-blue-128.png';
+import icons_check from '../../../assets/icons/icon_check.png';
 
 const { width: WIDTH } = Dimensions.get('window');
 const { height: HEIGHT } = Dimensions.get('window');
@@ -32,14 +30,7 @@ var thoigian = new Date();
 var date = thoigian.getDate();
 var month = thoigian.getMonth() + 1;
 var year = thoigian.getFullYear();
-var hour = thoigian.getHours();
-var minutes = thoigian.getMinutes();
-var seconds = thoigian.getSeconds();
-var getTime = thoigian.getTime();
-
 var datecurrent = year + '-' + month + '-' + date;
-var time = hour + ':' + minutes + ':' + seconds;
-
 
 export default class CreateClass extends Component {
   static navigationOptions = {
@@ -53,7 +44,6 @@ export default class CreateClass extends Component {
       images: null,
       listStudent: [],
       datecurrent: datecurrent,
-      // timeCompare:null,
       tittle: '',
       router: 'HomeScreen',
       className_Attendance: Global.tittle,
@@ -61,23 +51,18 @@ export default class CreateClass extends Component {
       getDateTime: null,
       getTimeArray: 0,
     };
-    const keyClass = this.props.navigation.state.params.keyClass;
     const idType = this.props.navigation.state.params.thamso;
     Global.router = this.state.router;
     Global.tittle = idType.className;
     console.log('in ra className', this.state.className_Attendance)
   }
   checkGoToQrCode = () => {
-var date = new Date();
 var seconds = Date.now();
-console.log('in ra đây xem cái thời gian khởi tạo cái datetime_seconds ', seconds)
     
     const keyClass = this.props.navigation.state.params.keyClass;
     const idType = this.props.navigation.state.params.thamso;
     const { className_Attendance, timeCompare } = this.state;
-    // console.log('in ra cái tên lớp trong didmout', this.state.className_Attendance)
     try {
-      console.log('in ra đường dẫn', firebase.database().ref().child(`Manage_Class/${keyClass}/Attendance/${this.state.datecurrent}`))
       firebase.database().ref().child(`Manage_Class/${keyClass}/Attendance/${this.state.datecurrent}`)
         .orderByChild('className').equalTo({ className_Attendance }).once('value', childSnapshot => {
           const { value_Attdance, getTimeArray } = this.state;
@@ -89,12 +74,7 @@ console.log('in ra đây xem cái thời gian khởi tạo cái datetime_seconds
                 datetime: doc.toJSON().datetime,
               });
             });
-            console.log('in ra đây xem cái thời gian lưu lần trước', value_Attdance[0].datetime)
-            console.log('in ra đây xem cái thời gian thực hiện lệnh ', seconds)
-            
             if ((parseInt(value_Attdance[0].datetime) + 60000) < seconds) {
-              // console.log('in ra đây xem cái mảng key 3', (value_Attdance[0].key).toString())
-              console.log('thời gian có thể truy cập vào QrCode là', (parseInt(seconds) + 60000));
               this.props.navigation.navigate('QRcode', { thamso: idType, keyClass: keyClass })
             }
             else {
@@ -105,28 +85,8 @@ console.log('in ra đây xem cái thời gian khởi tạo cái datetime_seconds
               this.props.navigation.navigate('Screen_Handle');
             }
           }
-          // console.log('in ra đây xem cái mảng1', value_Attdance[0].datetime)
-          // console.log('time hiện tại ở đây là ', timeCompare);
-          // console.log('thời gian hết khóa', (parseInt(value_Attdance[0].datetime) + 50))
-          // })
-          // else {
             this.props.navigation.navigate('QRcode', { thamso: idType, keyClass: keyClass })
-          // }
-          // if ((parseInt(value_Attdance[0].datetime) + 5000) <= timeCompare) {
-          //   this.props.navigation.navigate('QRcode', { thamso: idType, keyClass: keyClass })
-          // }
-          // else {
-          //   Alert.alert(
-          //     'Thông báo',
-          //     `Bạn đã điểm danh lớp ${idType.className}, chức năng tạm thời bị vô hiệu hóa !`
-          //   );
-          //   this.props.navigation.navigate('Screen_Handle');
-          // }
-          // },
-          // console.log('in ra đây xem cái mảng1', value_Attdance[0].datetime)
-
-          // );
-        })
+          })
     } catch (e) {
       console.log('lỗi ở class Screen_Handle đây là ', e)
     }
@@ -202,7 +162,7 @@ console.log('in ra đây xem cái thời gian khởi tạo cái datetime_seconds
 
   onPressAdd = () => {
     if (this.state.newClassName.trim() === '') {
-      alert('class name is blank');
+      alert('Tên của lớp không thể trống !');
       return;
     }
     try {
@@ -214,7 +174,6 @@ console.log('in ra đây xem cái thời gian khởi tạo cái datetime_seconds
     }
   };
   onGoToDetail = () => {
-    const { className } = this.state.class;
     if (this.state.newClassName != '') {
       alert(this.state.newClassName);
       this.props.navigation.navigate('CLASS_DETAILS', {
@@ -228,37 +187,6 @@ console.log('in ra đây xem cái thời gian khởi tạo cái datetime_seconds
     });
   }
   render() {
-    const viewHiden = (
-      <View style={styles.viewHiden}>
-        <View style={styles.viewImg}>
-          <Image
-            source={this.state.image}
-            style={{ height: HEIGHT / 3, width: WIDTH - 10 }}
-          />
-        </View>
-
-        <View style={styles.viewButton}>
-          <TouchableOpacity
-            style={styles.follow}
-            onPress={() => this.props.navigation.navigate('FollowClass')}
-          >
-            <Text style={{ color: 'white', fontSize: 16 }}>
-              Trở Về
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.follow}
-            onPress={() => this.props.navigation.navigate('FollowClass')}
-          >
-
-            <Text style={{ color: 'white', fontSize: 16 }}>
-              Điểm Danh
-            </Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-    );
-    const checkView = this.state.image ? viewHiden : <View />;
     const keyClass = this.props.navigation.state.params.keyClass;
     const idType = this.props.navigation.state.params.thamso;
 
@@ -267,14 +195,12 @@ console.log('in ra đây xem cái thời gian khởi tạo cái datetime_seconds
         <StatusBar backgroundColor="#03a9f4" barStyle="light-content" />
         <Tittle {...this.props} />
         <View style={styles.content}>
-          {/* <Image source ={logoapp} style={{width:'100%',height:'20%',marginTop:10,}}/> */}
           <View style={styles.content_child}>
             <ScrollView>
               <View style={styles.child_row}>
                 <View style={styles.children}>
                   <TouchableOpacity style={styles.styleTouch}
-                    // onPress={()=>this.props.navigation.navigate('InitClass')}
-                    onPress={() => this.props.navigation.navigate('Attendance', { keyClass: keyClass, thamso: idType })}
+                    onPress={() => this.props.navigation.navigate('ListStudent_On_Class', { keyClass: keyClass, thamso: idType })}
                   >
                     <View style={styles.styleImg}>
                       <Image source={icons_add} style={{ width: '80%', height: '80%', }} />
@@ -291,7 +217,6 @@ console.log('in ra đây xem cái thời gian khởi tạo cái datetime_seconds
                 </View>
                 <View style={styles.children}>
                   <TouchableOpacity style={styles.styleTouch}
-                    // onPress={()=>this.props.navigation.navigate('ClassDone')}
                     onPress={() => this.pickSingleWithCamera(false)}
                   >
                     <View style={styles.styleImg}>
@@ -351,78 +276,39 @@ console.log('in ra đây xem cái thời gian khởi tạo cái datetime_seconds
                     onPress={() => this.props.navigation.navigate('ListStudentAttendance', { keyClass: keyClass, thamso: idType })}
                   >
                     <View style={styles.styleImg}>
-                      <Image source={icons_qr} style={{ width: '80%', height: '80%' }} />
+                      <Image source={icons_check} style={{ width: '80%', height: '80%' }} />
                     </View>
                     <View style={styles.viewLable}>
                       <Text style={{ fontSize: 15 }}>
                         Danh Sách HS
                     </Text>
                       <Text style={{ fontSize: 15 }}>
-                        Điểm Danh
+                       Đã Điểm Danh
                       </Text>
                     </View>
                   </TouchableOpacity>
                 </View>
                 <View style={styles.children}>
                   <TouchableOpacity style={styles.styleTouch}
-                    onPress={() => this.props.navigation.navigate('StudentAttendance')}
+                    onPress={() => this.props.navigation.navigate('')}
                   >
                     <View style={styles.styleImg}>
                       <Image source={icons_picture} style={{ width: '80%', height: '80%' }} />
                     </View>
                     <View style={styles.viewLable}>
                       <Text style={{ fontSize: 15 }}>
-                        Test Học Sinh
+                        {/* Test Học Sinh */}
                     </Text>
                       <Text style={{ fontSize: 15 }}>
-                        Điểm Danh
-                    </Text>
-                    </View>
-                  </TouchableOpacity>
-                </View>
-              </View>
-              <View style={styles.child_row}>
-                <View style={styles.children}>
-                  <TouchableOpacity style={styles.styleTouch}
-                    onPress={() => this.props.navigation.navigate('DownloadExcel')}
-                  >
-                    <View style={styles.styleImg}>
-                      <Image source={icons_qr} style={{ width: '80%', height: '80%' }} />
-                    </View>
-                    <View style={styles.viewLable}>
-                      <Text style={{ fontSize: 15 }}>
-                       Download
-                    </Text>
-                      <Text style={{ fontSize: 15 }}>
-                        
-                      </Text>
-                    </View>
-                  </TouchableOpacity>
-                </View>
-                <View style={styles.children}>
-                  <TouchableOpacity style={styles.styleTouch}
-                    // onPress={() => this.props.navigation.navigate('StudentAttendance')}
-                  >
-                    <View style={styles.styleImg}>
-                      <Image source={icons_picture} style={{ width: '80%', height: '80%' }} />
-                    </View>
-                    <View style={styles.viewLable}>
-                      <Text style={{ fontSize: 15 }}>
-                        Test Chức Năng
-                    </Text>
-                      <Text style={{ fontSize: 15 }}>
-                        #
+                        {/* Điểm Danh */}
                     </Text>
                     </View>
                   </TouchableOpacity>
                 </View>
               </View>
             </ScrollView>
-            {/* {checkView} */}
           </View>
         </View>
-        {checkView}
-
       </View>
     );
   }
@@ -442,11 +328,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginVertical: 7,
     justifyContent: 'center',
-    // marginBottom: 0,
-    // borderBottomLeftRadius: 0,
-    // borderBottomRightRadius: 0,
     borderRadius: 7,
-    // paddingVertical:HEIGHT*0.03,
   },
   child_row: {
     flexDirection: 'row',
@@ -476,9 +358,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   viewLable: {
-    // flex:1,
     width: 140,
-    // textAlign:'center',
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 0,
@@ -521,54 +401,3 @@ const styles = StyleSheet.create({
   },
 
 });
-{/* <View style={styles.addClass}>
-          <TouchableOpacity
-          onPress={()=> this.props.navigation.navigate('Attendance',{keyClass: keyClass})}
-          >
-            <View style={styles.rowCreateClass}>
-              <View style={styles.viewImgIcon}>
-                <Image source={icons_list} style={{height: 45, width: 45}} />
-              </View>
-              <View style={styles.viewText}>
-                <Text style={styles.textDirector}>
-                  Xem Danh Sách Sinh Viên 
-                </Text>
-              </View>
-            </View>
-          </TouchableOpacity>
-        </View>
-        <View style={styles.addClass}>
-          <TouchableOpacity
-            // onPress={() => this.props.navigation.navigate ('CAMERA')}
-            onPress={() => this.pickSingleWithCamera (false)}
-          >
-            <View style={styles.rowCreateClass}>
-              <View style={styles.viewImgIcon}>
-                <Image source={camera} style={{height: 45, width: 45}} />
-              </View>
-              <View style={styles.viewText}>
-                <Text style={styles.textDirector}>
-                  Điểm Danh Bằng Camera
-                </Text>
-              </View>
-            </View>
-          </TouchableOpacity>
-        </View>
-        <View style={styles.addClass}>
-          <TouchableOpacity
-            // onPress={() => this.props.navigation.navigate ('CAMERA')}
-            onPress={this.pickSingle.bind (this)}
-          >
-            <View style={styles.rowCreateClass}>
-              <View style={styles.viewImgIcon}>
-                <Image source={img} style={{height: 45, width: 45}} />
-              </View>
-              <View style={styles.viewText}>
-                <Text style={styles.textDirector}>
-                  Điểm Danh Bằng Hình Ảnh
-                </Text>
-              </View>
-            </View>
-          </TouchableOpacity>
-        </View>
-        {checkView} */}

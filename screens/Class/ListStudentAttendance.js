@@ -50,7 +50,6 @@ class FlatListItem extends Component {
               if( typeof element.val().MSSV != 'undefined'){
                 listHistoryChild.push(element.val().MSSV)
               }
-              // this.setState({listHistoryChild:listHistoryChild})
             })
             this.setState({listHistoryChild:listHistoryChild})
             console.log('in ra list', this.state.listHistoryChild)
@@ -62,20 +61,12 @@ class FlatListItem extends Component {
   }
 
   render() {
-    const {listHistoryChild,list_MSSV_Joined}  = this.state;
-    
-    // for(var i=0;i<listHistoryChild.length;i++){
-    //   if(list_MSSV_Joined.includes(listHistoryChild[i])){
-    //     this.setState({check:true})
-    //   }
-    // }
-  
     return (
       <View style={style.viewOneClass}>
         <TouchableOpacity
           style={style.viewFlatList}
         >
-          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', flex: 1, }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', flex: 1,borderBottomWidth:1 ,borderBottomColor: 'gray'}}>
             <View style={[styles.styleColumn, { flex: 1, borderLeftWidth: 0.5, borderLeftColor: 'gray', }]}>
               <Text>{(this.props.index)+1}</Text>
             </View>
@@ -91,7 +82,6 @@ class FlatListItem extends Component {
             </View>
             <View style={[styles.styleColumn, { flex: 1, }]}>
               <Text style={{ fontSize: 12, fontWeight: '700', opacity: .7, }}>
-                {/* {list_MSSV_Joined} */}
                 </Text>
             </View>
           </View>
@@ -108,8 +98,8 @@ const style = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     width: WIDTH * 0.97,
-    borderBottomColor: 'gray',
-    borderBottomWidth: 0.5,
+    // borderBottomColor: 'gray',
+    // borderBottomWidth: 0.5,
   },
   viewFlatList: {
     flexDirection: 'row',
@@ -160,9 +150,7 @@ export default class ListStudentAttendance extends Component {
     this.getListStudent_Joined();
   }
   getListHistory() {
-    const idType = this.props.navigation.state.params.thamso;
     const keyClass = this.props.navigation.state.params.keyClass;
-    console.log('in ra keyClass',keyClass)
     var rootRef = firebase.database().ref();
     var urlRef = rootRef.child(`Manage_Class/${keyClass}/Attendance`);
 
@@ -183,20 +171,15 @@ export default class ListStudentAttendance extends Component {
         this.setState({
           listHistoryChild
         })
-        console.log('IN RA XEM MANG CHILD  LISTHISTORY ', this.state.listHistoryChild)
       });
       this.setState({ listHistory: listHistory })
-      console.log('IN RA XEM MANG LISTHISTORY ', this.state.listHistory)
     },
-
     );
   }
   getListStudent_Joined() {
     const keyClass = this.props.navigation.state.params.keyClass;
     var rootRef = firebase.database().ref();
     var urlRef = rootRef.child('Manage_Class/' + keyClass + '/StudentJoin');
-    console.log('key truyền qua là', keyClass)
-    console.log('path-urlRef', urlRef.path);
     urlRef.once('value', childSnapshot => {
       if (childSnapshot.exists()) {
         const listStudent_Joined = [];
@@ -234,8 +217,6 @@ export default class ListStudentAttendance extends Component {
     const keyClass = this.props.navigation.state.params.keyClass;
     var rootRef = firebase.database().ref();
     var urlRef = rootRef.child(`Manage_Class/${keyClass}/Attendance/${this.state.datecurrent}`);
-    console.log('key truyền qua là', keyClass)
-    console.log('path-urlRef', urlRef.path);
     urlRef.on('value', childSnapshot => {
       if (childSnapshot.exists()) {
         const listStudent = [];
@@ -259,27 +240,7 @@ export default class ListStudentAttendance extends Component {
     });
   }
 
-  ExportExel = () => {
-    // const { listStudent }  = this.state
-    // console.log('IN RA DANH SÁCH HỌC SINH ĐÃ ĐƯỢC ĐIỂM DANH :',listStudent);
-    //  const json2csv = require('../../node_modules/csvjson-json2csv/json2csv');
-    // var csv = json2csv(this.state.listStudent);
-    // console.log(csv);
-
-    // // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
-    // var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-    // console.log('Upload is ' + progress + '% done');
-
-  }
   render() {
-    const tableData = [];
-    for (let i = 0; i < 20; i += 1) {
-      const rowData = [];
-      for (let j = 0; j < 5; j += 1) {
-        rowData.push(`${i}${j}`);
-      }
-      tableData.push(rowData);
-    }
     const idType = this.props.navigation.state.params.thamso;
     const { listHistory } = this.state;
     return (
@@ -288,67 +249,38 @@ export default class ListStudentAttendance extends Component {
         <View style={styles.viewCreateClass}>
         <TouchableOpacity
             onPress={()=>this.props.navigation.navigate('ListCLass_DateTime',{mangNgayDiemDanh:listHistory})}
-            style={{width: '100%', height: '100%', justifyContent: 'center'}}
+    style={{width: '100%', height: '100%', justifyContent: 'center'}}
           >
-            <Text style={{textAlign: 'center'}}>Lấy QRCode</Text>
+            <Text style={{textAlign: 'center'}}>Danh sách những ngày điểm danh trước đó</Text>
           </TouchableOpacity>
-          <TextInput
-            style={styles.viewTextInput}
-            keyboardType="default"
-            placeholderTextColor="gray"
-            fontStyle="italic"
-            placeholder="Hãy nhập gì đó "
-            autoCapitalize="none"
-            onChangeText={text => {
-              this.setState({ txtSearch: text });
-            }}
-            value={this.state.txtSearch}
-            onSelectionChange={() => this.onSearchNew()}
-          />
+        
         </View>
         <View style={{ marginTop: 7 }}>
 
-          <View style={[styles.header, { flexDirection: 'column', justifyContent: 'space-between', height: HEIGHT / 12 }]}>
-            <View style={{ justifyContent: 'space-between', flexDirection: 'row', }}>
-              <View style={{ width: '62%', borderWidth: 0, height: HEIGHT / 25, paddingLeft: 10 }}>
-                <Text>
-                  Lớp  : {idType.class}
-                </Text>
-              </View>
+          <View style={[styles.header, { flexDirection: 'column', justifyContent: 'space-between', height: HEIGHT / 22 }]}>
+            <View style={{ justifyContent: 'space-between', flexDirection: 'row',height: HEIGHT / 25,borderWidth: 0,}}>
               <View style={{ width: '38%', borderWidth: 0, height: HEIGHT / 25, paddingLeft: 0, }}>
                 <Text>
                   Ngày : {this.state.datecurrent}
                 </Text>
               </View>
             </View>
-            <View style={{ justifyContent: 'space-between', flexDirection: 'row', }}>
-              <View style={{ width: '62%', borderWidth: 0, height: HEIGHT / 25, paddingLeft: 10 }}>
-                <Text>
-                  Môn : {idType.subject}
-                </Text>
-              </View>
-              <View style={{ width: '38%', borderWidth: 0, height: HEIGHT / 25, paddingLeft: 0, }}>
-                <Text>
-                  Sĩ Số : {idType.count}
-                </Text>
-              </View>
-            </View>
           </View>
-          <View style={styles.header}>
-            <View style={[styles.styleColumn, { flex: 1, }]}>
+          <View style={[styles.header,{opacity:.8}]}>
+            <View style={[styles.styleColumn, { flex: 1, borderLeftWidth: 0.5, borderLeftColor: 'gray', }]}>
               <Text >STT</Text>
             </View>
-            <View style={[styles.styleColumn, { flex: 3, }]}>
+            <View style={[styles.styleColumn, { flex: 3,borderLeftWidth: 0.5, borderLeftColor: '#666',  }]}>
               <Text style={{ fontSize: 12, fontWeight: '700', opacity: .7, }}>
                 MSSV
                 </Text>
             </View>
-            <View style={[styles.styleColumn, { flex: 5 }]}>
+            <View style={[styles.styleColumn, { flex: 5 ,borderLeftWidth: 0.5, borderLeftColor: '#666', }]}>
               <Text style={{ fontSize: 14, fontWeight: '700', opacity: .7, }}>
                 Họ Và Tên
                 </Text>
             </View>
-            <View style={[styles.styleColumn, { flex: 1 }]}>
+            <View style={[styles.styleColumn, { flex: 1,borderLeftWidth: 0.5, borderLeftColor: '#666',  }]}>
               <Text style={{ fontSize: 12, fontWeight: '700', opacity: .7, }}>
                 AT
                 </Text>
@@ -373,11 +305,8 @@ export default class ListStudentAttendance extends Component {
         />
         <View style={styles.viewResult}>
           <View style={styles.viewResultChild}>
-            <Text style={styles.textResult}>Total Student : 30</Text>
-            <Text style={styles.textResult}>Student Pass: 25</Text>
-          </View>
-          <View style={styles.viewResultChild}>
-            <Text style={styles.textResult}>Student Fail : 5</Text>
+            <Text style={styles.textResult}>Sĩ số : {idType.count} </Text>
+            <Text style={styles.textResult}>Vắng :</Text>
           </View>
         </View>
       </View>
@@ -405,16 +334,16 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    height: 64,
+    height: 34,
     paddingHorizontal: 20,
     borderBottomColor: '#f1f1f1',
     borderBottomWidth: 0,
-    backgroundColor: 'rgba(140, 200, 214,0.8)',
+    backgroundColor: 'rgba(140, 200, 214,0.6)',
   },
   viewResult: {
     zIndex: 10,
     backgroundColor: '#4bacb8',
-    height: HEIGHT / 9,
+    height: HEIGHT / 14,
     width: WIDTH,
     paddingLeft: 20,
     justifyContent: 'center',
@@ -432,7 +361,7 @@ const styles = StyleSheet.create({
     height: HEIGHT / 15,
     backgroundColor: '#537791',
     width: WIDTH * 0.97,
-    borderLeftWidth: 0.5, borderLeftColor: 'gray',
+    // borderLeftWidth: 0.5, borderLeftColor: 'gray',
     borderTopColor: 'gray',
     borderTopWidth: 0.5,
     alignItems: 'center',

@@ -29,14 +29,14 @@ const HEADER_MAX_HEIGHT = 300;
 const HEADER_MIN_HEIGHT = Platform.OS === 'ios' ? 60 : 40;
 const HEADER_SCROLL_DISTANCE = HEADER_MAX_HEIGHT - HEADER_MIN_HEIGHT;
 
-export default class My_Profile extends Component {
+export default class Student_Profile extends Component {
     static navigationOptions = {
         header: null,
     };
     constructor(props) {
         super(props);
         this.state = {
-            tittle: 'THÔNG TIN CÁ NHÂN',
+            tittle: `${this.props.navigation.state.params.info.fullName}`,
             router: 'List_Student_Join',
             scrollY: new Animated.Value(
                 Platform.OS === 'ios' ? -HEADER_MAX_HEIGHT : 0,
@@ -54,7 +54,6 @@ export default class My_Profile extends Component {
     _renderScrollViewContent() {
         const info = this.props.navigation.state.params.info;
         const infoClass = this.props.navigation.state.params.infoClass;
-        // const arrListAttendance = this.props.navigation.state.params.arrListAttendance;
         const listHistoryChild = this.props.navigation.state.params.listHistoryChild;
         var tongsotiethoc = (infoClass.numberTarget)*15;
         return (

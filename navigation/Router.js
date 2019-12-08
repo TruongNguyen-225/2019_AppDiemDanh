@@ -1,23 +1,15 @@
 import {
-  // createStackNavigator,
   createAppContainer,
-  // createDrawerNavigator,
-  createBottomTabNavigator,
-  DrawerNavigator,
   createSwitchNavigator,
 } from 'react-navigation';
 import { createStackNavigator }  from 'react-navigation-stack'
 import {  createDrawerNavigator } from 'react-navigation-drawer'
 import {Dimensions,Image} from 'react-native';
 import React from 'react';
-
-
 import home from '../assets/icons/icons8-home-page-90.png';
 import user from '../assets/icons/icons8-user-menu-male-100.png';
 import iconsClass from '../assets/icons/icons8-numbered-list-100.png';
-
-import HomeScreen from '../screens/Home/HomeScreen1';
-// import CheckWelcome from '../screens/Home/CheckWelcome';
+import HomeScreen from '../screens/Home/HomeScreen';
 
 // AUTHENTICATION
 import SignUp from '../screens/HandleAuthentication/SignUp';
@@ -26,21 +18,17 @@ import Loading from '../screens/HandleAuthentication/Loading';
 
 //HANDLE CLASS
 import CreateClass from '../screens/Class/CreateClass';
-import Attendance from '../screens/Class/Attendance';
-import Detail_Class from '../screens/Class/Detail_Class';
+import ListStudent_On_Class from '../screens/Class/ListStudent_On_Class';
 import FollowClass from '../screens/Class/FollowClass';
-import ListClass from '../screens/Class/ListClass';
 import Main from '../screens/HandleAuthentication/Main';
 import Update_Manage_Class from '../screens/Class/Update_Manage_Class';
 import ListStudentAttendance from '../screens/Class/ListStudentAttendance';
 import InitClass from '../screens/Class/InitClass';
 import ClassDone from '../screens/Class/ClassDone';
 import QRcode from '../screens/Class/Attendance_handle/QRcode';
-import StudentAttendance from '../screens/Class/Attendance_handle/StudentAttendance';
-import DownloadExcel from '../screens/Class/DownloadExcel';
 import ListCLass_DateTime from '../screens/Class/ListCLass_DateTime';
 import ShowAllStudentWithResultSearch from '../screens/Class/ShowAllStudentWithResultSearch';
-import My_Profile from '../screens/Class/My_Profile';
+import Student_Profile from '../screens/Class/Student_Profile';
 
 // SEARCH
 import SearchScreen from '../screens/Search/SearchScreen';
@@ -51,10 +39,7 @@ import Screen_Handle from '../screens/Class/Attendance_handle/Screen_Handle';
  
 //HANDLE INFORMATION
 import Update_Info from '../screens/Update/Update_Info';
-import OpenDrawer from '../screens/Header/OpenDrawer';
-
-
-// import OpenDrawer from '../screens/Home/HomeScreen';
+// import OpenDrawer from '../screens/Header/OpenDrawer';
 export const AuthenticationStack = createStackNavigator (
   {
     LogIn,
@@ -71,23 +56,19 @@ export const RootStack = createStackNavigator (
     Update_Manage_Class,
     SearchScreen,
     CreateClass,
-    Detail_Class,
     FollowClass,
-    ListClass,
-    Attendance,
+    ListStudent_On_Class,
     Screen_Handle,
     Camera,
     Main,
     Update_Info,
-    StudentAttendance,
     InitClass,
     ClassDone,
     QRcode,
     ListStudentAttendance,
-    DownloadExcel, 
     ListCLass_DateTime,
     ShowAllStudentWithResultSearch,
-    My_Profile,
+    Student_Profile,
   },
   {
     initialRouteName: 'HomeScreen',
@@ -103,29 +84,11 @@ export const StackLoading = createSwitchNavigator (
     initialRouteName: 'Loading',
   }
 );
-// export const StackManageClass = createStackNavigator (
-//   {
-//     CreateClass,
-//     Detail_Class,
-//     FollowClass,
-//     ListClass,
-//     Attendance,
-//     Screen_Handle,
-//     Camera,
-//     OpenDrawer,
-    
-    
-//   },
-//   {
-//     // initialRouteName: 'HomeScreen',
-//   }
-// );
 export const StackManageInfo = createStackNavigator (
   {
     Main,
     Update_Info,
     Update_Manage_Class,
-    // HomeScreen,
   
   },
   {
@@ -168,12 +131,10 @@ let RouteConfigs = {
 };
 let DrawerNavigatorConfig = {
   unmountInactiveRoutes: true,
-  //drawerWidth : screenWidth /2,
   drawerPosition: 'left',
   contentOptions: {
     activeTintColor: 'crimson',
   },
-  //order: [Welcome, Login, TrangChu, UpLoadImg, Basic, Todo, DBCom]
 };
 const drawera = createDrawerNavigator(RouteConfigs, DrawerNavigatorConfig);
 //----------------Switch Navigation----------------------------------------

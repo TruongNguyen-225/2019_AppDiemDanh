@@ -33,19 +33,18 @@ export default class AddModal extends Component {
       <Modal
         ref={'myModal'}
         style={styles.styleModal}
-        // position="center"
+        position="center"
         backdrop={true}
         onClosed={() => {}}
       >
-        <View style={{ margin: WIDTH / 6, width: '100%'}}>
-          <QRCode
-            value={`${idType._id}`}
-            logoSize={500}
-          logoBackgroundColor='transparent'
-          />
-          <Text>aaaaaaaaaaa</Text>
-        </View>
-
+        <View style={styles.viewQRcode}>
+            <QRCode
+                value={`${idType._id}`}
+                logoSize={100}
+                size={260}
+                logoBackgroundColor='transparent'
+            />
+         </View>
       </Modal>
     );
   }
@@ -58,7 +57,7 @@ const styles = StyleSheet.create ({
     justifyContent: 'center',
   },
   styleModal: {
-    borderRadius: Platform.OS === 'ios' ? 30 : 20,
+    borderRadius: Platform.OS === 'ios' ? 30 : 7,
     marginTop: WIDTH / 10,
     width: '100%',
     height: '80%',
@@ -71,11 +70,12 @@ const styles = StyleSheet.create ({
     paddingTop: 40,
     height: '80%',
   },
-
-  viewQrcode: {
-    height: 260 / 2,
-    width: 260 / 2,
-    marginBottom: 25,
-    borderWidth: 2,
-  },
+  viewQRcode: {
+    flex: 7,
+    borderWidth: 0,
+    width: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth:1,
+},
 });

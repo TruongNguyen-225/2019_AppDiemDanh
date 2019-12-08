@@ -3,7 +3,6 @@ import {
   View,
   Text,
   StatusBar,
-  TextInput,
   Image,
   FlatList,
   TouchableOpacity,
@@ -17,12 +16,10 @@ import Global from '../../constants/global/Global';
 import Tittle from '../Header/Tittle';
 import AddModal from './AddModal';
 import * as Animatable from 'react-native-animatable';
-
 import samesame from '../../assets/images/samesamemon.jpg';
 
 const {width: WIDTH} = Dimensions.get ('window');
 const {height: HEIGHT} = Dimensions.get ('window');
-
 var system = firebase.database ().ref ().child ('members');
 export default class CreateClass extends Component {
   static navigationOptions = {
@@ -48,17 +45,11 @@ export default class CreateClass extends Component {
       fullStudent:false,
     };
     const idType = this.props.navigation.state.params.thamso;
-    const listStudent = this.props.navigation.state.params.listStudent;
-
-    // Global.router = this.state.router;
     Global.tittle = idType.className;
-    // Global.tittle = listStudent.email
     Global.siso = parseInt (idType.count);
     this._onPressAdd = this._onPressAdd.bind (this);
-    // alert(idType.count)
   }
   componentDidMount () {
-    // this.getDataFromDB ();
     const thamso = this.props.navigation.state.params.thamso;
     var rootRef = firebase.database().ref();
     var urlRef = rootRef.child('Manage_Class/' + thamso.key+'/StudentJoin');
@@ -131,7 +122,6 @@ export default class CreateClass extends Component {
     }
   };
   onGoToDetail = () => {
-    const {className} = this.state.class;
     if (this.state.newClassName != '') {
       alert (this.state.newClassName);
       this.props.navigation.navigate ('CLASS_DETAILS', {
@@ -207,14 +197,10 @@ this.props.navigation.navigate ('Loading');
               onEndReached={() => {
                 this.refesh ();
               }}
-              // data={this.state.dataArray}
               data={listStudent}
               renderItem={({item, index}) => {
                 return (
-                  <TouchableOpacity
-                    // onPress={() =>
-                    //   this.props.navigation.navigate ('Attendance',{infoPerson:item})}
-                  >
+                  <TouchableOpacity>
                     <View style={styles.row}>
                       <View style={styles.left}>
                         <Image
@@ -234,9 +220,6 @@ this.props.navigation.navigate ('Loading');
                         <Text style={{fontSize: 14, fontWeight: '600'}}>
                           Email : {item.email}
                         </Text>
-                        {/* <Text style={{fontSize: 14, fontWeight: '600'}}>
-                          Name : {item.fullName}
-                        </Text> */}
                       </View>
                     </View>
                   </TouchableOpacity>
@@ -251,7 +234,6 @@ this.props.navigation.navigate ('Loading');
           animation="rubberBand"
           iterationCount={10000}
           direction="alternate"
-          // style={{alignItems:'center',width: '90%',height: '7%',}}
           style={styles.btnRubberBand}
         >
           <TouchableOpacity
@@ -293,12 +275,10 @@ const styles = StyleSheet.create ({
     color: '#fff',
   },
   row: {
-    // padding: 10,
     flex: 1,
     borderBottomWidth: 1,
     borderColor: '#f1f1f1',
     height: HEIGHT / 8,
-    // width: 'auto',
     color: 'red',
     flexDirection: 'row',
     justifyContent: 'center',
@@ -319,18 +299,15 @@ const styles = StyleSheet.create ({
     marginLeft: 15,
   },
   viewResult: {
-    // flex:1,
     zIndex: 10,
     backgroundColor: '#4bacb8',
     height: HEIGHT / 9,
-    // width: WIDTH,
     paddingLeft: 20,
     justifyContent: 'center',
   },
   textResult: {marginVertical: 5, fontSize: 15, width: WIDTH * 0.4},
   viewResultChild: {flexDirection: 'row', marginHorizontal: WIDTH / 14},
   viewQrcode: {
-    // paddingVertical: WIDTH * 0.1,
     marginTop: WIDTH / 2 - 125,
     marginLeft: WIDTH / 2 - 125,
     height: 260,
@@ -343,10 +320,8 @@ const styles = StyleSheet.create ({
     color: '#fff',
     width: '100%',
     height: '7%',
-    // borderRadius: 15,
     alignItems: 'center',
     justifyContent: 'center',
-    // marginHorizontal: '5%',
   },
   bigButton: {
     width: WIDTH * 0.9,

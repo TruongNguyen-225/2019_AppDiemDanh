@@ -60,7 +60,7 @@ class FlatListItem extends Component {
       <View style={style.viewOneClass}>
         <TouchableOpacity
           style={style.viewFlatList}
-          onPress={() => this.props.navigation.navigate('My_Profile', { info: this.props.item ,infoClass: this.props.navigation.state.params.thamso,listHistoryChild:listHistoryChild,arrListAttendance:arrListAttendance})}
+          onPress={() => this.props.navigation.navigate('Student_Profile', { info: this.props.item ,infoClass: this.props.navigation.state.params.thamso,listHistoryChild:listHistoryChild,arrListAttendance:arrListAttendance})}
         >
           <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', flex: 1, }}>
             <View style={[styles.styleColumn, { flex: 1, borderLeftWidth: 0.5, borderLeftColor: 'gray', }]}>
@@ -73,7 +73,7 @@ class FlatListItem extends Component {
             </View>
             <View style={[styles.styleColumn, { flex: 5, }]}>
               <Text style={{ fontSize: 14, fontWeight: '700', opacity: .7, }}>
-                {this.props.item.email}
+                {this.props.item.fullName}
               </Text>
             </View>
                {songayvang>=3 ? <View style={[styles.styleColumn, { flex: 1, backgroundColor:'yellow',color:'white'}]}>
@@ -92,8 +92,6 @@ const style = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     width: WIDTH * 0.97,
-    borderBottomColor: 'gray',
-    borderBottomWidth: 0.5,
   },
   viewFlatList: {
     flexDirection: 'row',
@@ -101,7 +99,9 @@ const style = StyleSheet.create({
     width: WIDTH,
     alignItems: 'center',
     width: WIDTH * 0.97,
-    backgroundColor: '#fff'
+    backgroundColor: '#fff',
+    borderBottomColor: 'gray',
+    borderBottomWidth: 0.5,
   },
   styleText: {
     fontSize: 12,
@@ -120,7 +120,7 @@ var seconds = thoigian.getSeconds();
 
 var datecurrent = year + '/' + month + '/' + date;
 var time = hour + ':' + minutes + ':' + seconds;
-export default class ExampleThree extends Component {
+export default class ListStudent_On_Class extends Component {
   static navigationOptions = {
     header: null,
   };
@@ -132,7 +132,6 @@ export default class ExampleThree extends Component {
       tittle: '',
       router: 'HomeScreen',
     };
-    // const keyClass = this.props.navigation.state.params.keyClass;
     const idType = this.props.navigation.state.params.thamso;
     Global.siso = idType.count;
     Global.router = this.state.router;
@@ -178,75 +177,17 @@ export default class ExampleThree extends Component {
     });
   }
   render() {
-    // const state = this.state;
-    // const tableData = [];
-    // for (let i = 0; i < 20; i += 1) {
-    //   const rowData = [];
-    //   for (let j = 0; j < 5; j += 1) {
-    //     rowData.push(`${i}${j}`);
-    //   }
-    //   tableData.push(rowData);
-    // }
-    // const keyClass = this.props.navigation.state.params.keyClass;
     const idType = this.props.navigation.state.params.thamso;
-
     return (
       <View style={styles.container}>
-        {/* <Tittle onGoBack={() => this.props.navigation.goBack ()} /> */}
         <Tittle {...this.props} />
-        {/* <View style={styles.viewCreateClass}>
-          <TouchableOpacity
-            style={{ marginRight: 10 }}
-            underlayColor="tomato"
-            onPress={this.onPressAdd}
-          >
-            <Image style={{ tintColor: 'blue', width: 30, height: 30 }} source={filter} />
-          </TouchableOpacity>
-          <TextInput
-            style={styles.viewTextInput}
-            keyboardType="default"
-            placeholderTextColor="gray"
-            fontStyle="italic"
-            placeholder="Hãy nhập gì đó "
-            autoCapitalize="none"
-            onChangeText={text => {
-              this.setState({ txtSearch: text });
-            }}
-            value={this.state.txtSearch}
-            onSelectionChange={() => this.onSearchNew()}
-          />
-          <TouchableOpacity
-            style={{ marginRight: 10 }}
-            underlayColor="tomato"
-            onPress={this.onPressAdd}
-          >
-            <Image style={{ width: 30, height: 30 }} source={search} />
-          </TouchableOpacity>
-        </View> */}
         <View style={{ marginTop: 7 }}>
 
-          <View style={[styles.header, { flexDirection: 'column', justifyContent: 'space-between', height: HEIGHT / 12 }]}>
-            <View style={{ justifyContent: 'space-between', flexDirection: 'row', }}>
-              <View style={{ width: '62%', borderWidth: 0, height: HEIGHT / 25, paddingLeft: 10 }}>
-                <Text>
-                  Lớp  : {idType.class.toUpperCase()}
-                </Text>
-              </View>
+        <View style={[styles.header, { flexDirection: 'column', justifyContent: 'space-between', height: HEIGHT / 22 }]}>
+            <View style={{ justifyContent: 'space-between', flexDirection: 'row',height: HEIGHT / 25,borderWidth: 0,}}>
               <View style={{ width: '38%', borderWidth: 0, height: HEIGHT / 25, paddingLeft: 0, }}>
                 <Text>
                   Ngày : {this.state.datecurrent}
-                </Text>
-              </View>
-            </View>
-            <View style={{ justifyContent: 'space-between', flexDirection: 'row', }}>
-              <View style={{ width: '62%', borderWidth: 0, height: HEIGHT / 25, paddingLeft: 10 }}>
-                <Text>
-                  Môn : {idType.subject.toUpperCase()}
-                </Text>
-              </View>
-              <View style={{ width: '38%', borderWidth: 0, height: HEIGHT / 25, paddingLeft: 0, }}>
-                <Text>
-                  Sĩ Số : {idType.count}
                 </Text>
               </View>
             </View>
@@ -340,7 +281,6 @@ const styles = StyleSheet.create({
     height: HEIGHT / 15,
     backgroundColor: '#537791',
     width: WIDTH * 0.97,
-    // marginTop: 7,
     borderLeftWidth: 0.5, borderLeftColor: 'gray',
     borderTopColor: 'gray',
     borderTopWidth: 0.5,
@@ -356,12 +296,10 @@ const styles = StyleSheet.create({
   },
   styleColumn: {
     alignItems: 'center',
-    // width: WIDTH * 0.,
     borderRightWidth: 0.5,
     borderRightColor: 'gray',
     height: HEIGHT / 15,
     justifyContent: 'center',
-    // flex:1,
   },
 
 });

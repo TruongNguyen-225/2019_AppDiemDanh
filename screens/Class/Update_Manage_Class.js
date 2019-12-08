@@ -16,7 +16,6 @@ import Global from '../../constants/global/Global';
 
 const { width: WIDTH } = Dimensions.get('window');
 const { height: HEIGHT } = Dimensions.get('window');
-
 export default class Update_Manage_Class extends Component {
   static navigationOptions = {
     header: null,
@@ -50,13 +49,11 @@ export default class Update_Manage_Class extends Component {
   getUserData = async () => {
     await AsyncStorage.getItem('userData').then(value => {
       var userData = JSON.parse(value);
-
       this.setState({ userData: userData });
     });
   };
   async updateClass() {
     const idType = this.props.navigation.state.params.thamso;
-    // var className = this.state.newClassName.concat(' - ').concat(this.state.subject).toUpperCase();
     var checkRegExp = /^[0-9]*$/;
     if (
       this.state.newClassName.trim() === '' ||

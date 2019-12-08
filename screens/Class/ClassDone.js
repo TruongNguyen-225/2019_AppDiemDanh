@@ -2,7 +2,6 @@ import React, {Component} from 'react';
 import {
   View,
   Text,
-  StatusBar,
   Image,
   FlatList,
   TouchableOpacity,
@@ -13,7 +12,6 @@ import {
 import firebase from 'react-native-firebase';
 import AsyncStorage from '@react-native-community/async-storage';
 import Global from '../../constants/global/Global';
-import OfflineNotice from '../Header/OfflineNotice';
 import search from '../../assets/icons/icons8-search-96.png';
 import filter from '../../assets/icons/icons8-filter-96.png';
 import school from '../../assets/icons/icons8-abc-96.png';

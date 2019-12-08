@@ -10,27 +10,21 @@ import {
   StyleSheet,
   Dimensions,
   Alert,
-  Button,
 } from 'react-native';
 import firebase from 'react-native-firebase';
 import AsyncStorage from '@react-native-community/async-storage';
 import DatePicker from 'react-native-datepicker';
-
 import Global from '../../constants/global/Global';
 import OfflineNotice from '../Header/OfflineNotice';
 import Swipeout from 'react-native-swipeout';
-
 import icons_add from '../../assets/icons/icon_plus_big.png';
 import school from '../../assets/icons/icons8-abc-96.png';
 import left from '../../assets/icons/left.png';
-
 import Tittle from '../Header/Tittle';
 
 const { width: WIDTH } = Dimensions.get('window');
 const { height: HEIGHT } = Dimensions.get('window');
-
 var system = firebase.database().ref().child('Manage_Class');
-
 class FlatListItem extends Component {
   constructor(props) {
     super(props);
@@ -41,7 +35,6 @@ class FlatListItem extends Component {
     };
   }
   render() {
-    // console.log('key',this.props.item.key)
     const swipeSettings = {
       autoClose: true,
       onClose: (secId, rowId, direction) => {
@@ -55,7 +48,6 @@ class FlatListItem extends Component {
       right: [
         {
           onPress: () => {
-            //  this.showInfoClass()
             this.props.navigation.navigate('Update_Manage_Class', {thamso: this.props.item, })
           },
           text: 'Edit',
@@ -111,7 +103,6 @@ class FlatListItem extends Component {
             style={style.viewFlatList}
             onPress={async () => {
               await this.props.navigation.navigate ('FollowClass', {
-                // listStudent: this.state.listStudent,
                 thamso: this.props.item,
               });
             }}
@@ -199,7 +190,6 @@ export default class CreateClass extends Component {
       router: 'HomeScreen',
       tittle: 'TẠO LỚP MỚI',
       datecurrent: datecurrent,
-      // date:datecurrent,
       time: time,
       isChecked: 0, // 0 là ' Đang xử lý ',
       dateFinish:'',
@@ -244,7 +234,6 @@ export default class CreateClass extends Component {
               }),
               loading: true,
             });
-            console.log('in ra classs', this.state.class);
           });
         }
       });
@@ -335,7 +324,6 @@ export default class CreateClass extends Component {
     this.refs.addModal.showAddModal();
   }
   onGoToDetail = () => {
-    const { className } = this.state.class;
     if (this.state.newClassName != '') {
       alert(this.state.newClassName);
       this.props.navigation.navigate('Detail_Class', {
@@ -344,11 +332,8 @@ export default class CreateClass extends Component {
     }
   };
   render() {
-    const { currentUser } = this.state;
     return (
       <View style={{ flex: 1, marginTop: Platform.OS === 'ios' ? 34 : 0 }}>
-        <StatusBar backgroundColor="#03a9f4" barStyle="light-content" />
-        <OfflineNotice />
         <Tittle {...this.props} />
         <View style={styles.styleViewInput}>
           <View style={styles.styleChildViewInput}>
@@ -546,9 +531,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#fff',
     paddingLeft: 20,
-    // backgroundColor: '#f1f1f1',
     backgroundColor:'rgba(140, 200, 214,0.8)',
-
   },
   viewImgIcon: {
     justifyContent: 'center',
@@ -599,6 +582,5 @@ const styles = StyleSheet.create({
    marginHorizontal:3,
    justifyContent:'center',
    alignItems:'center',
-
  },
 });

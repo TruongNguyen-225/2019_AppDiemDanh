@@ -184,9 +184,6 @@ export default class Main extends Component {
             },
           ]}
         >
-          {/* <Text style={styles.HeaderInsideText}>
-            {currentUser && currentUser.email}
-          </Text> */}
           <Text style={styles.HeaderInsideText}>
             {this.state.userData.email}
           </Text>
@@ -219,38 +216,6 @@ export default class Main extends Component {
                   <View style={styles.viewText}>
                     <Text style={styles.textDirector}>
                       Cập Nhật Thông Tin
-                    </Text>
-                    <View style={{top: 2 * (HEIGHT / 10)}} />
-                  </View>
-                </View>
-              </TouchableOpacity>
-            </View>
-            <View>
-              <TouchableOpacity onPress={()=> this.props.navigation.navigate('ListClass')}>
-                <View style={styles.rowCreateClass}>
-                  <View style={styles.viewImgIcon}>
-                    <Image source={settings} style={{height: 40, width: 40}} />
-                  </View>
-                  <View style={styles.viewText}>
-                    <Text style={styles.textDirector}>
-                      Gia Nhập Lớp Học
-                    </Text>
-                    <View style={{top: 2 * (HEIGHT / 10)}} />
-                  </View>
-                </View>
-              </TouchableOpacity>
-            </View>
-            <View>
-              <TouchableOpacity 
-              onPress={()=> this.props.navigation.navigate('ShowStudentJoin')}
-              >
-                <View style={styles.rowCreateClass}>
-                  <View style={styles.viewImgIcon}>
-                    <Image source={history} style={{height: 40, width: 40}} />
-                  </View>
-                  <View style={styles.viewText}>
-                    <Text style={styles.textDirector}>
-                     Danh Sách Lớp Đã Tham Gia
                     </Text>
                     <View style={{top: 2 * (HEIGHT / 10)}} />
                   </View>

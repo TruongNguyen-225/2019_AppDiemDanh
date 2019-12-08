@@ -3,14 +3,10 @@ import {
     View,
     Text,
     StatusBar,
-    TextInput,
-    Image,
-    FlatList,
     TouchableOpacity,
     StyleSheet,
     Dimensions,
     Alert,
-    ScrollView,
 } from 'react-native';
 import firebase from 'react-native-firebase';
 import Global from '../../../constants/global/Global';
@@ -21,9 +17,6 @@ import CountDown from 'react-native-countdown-component';
 import {WToast} from 'react-native-smart-tip'
 
 const { width: WIDTH } = Dimensions.get('window');
-const { height: HEIGHT } = Dimensions.get('window');
-
-var system = firebase.database().ref().child('members');
 var thoigian = new Date();
 var date = thoigian.getDate();
 var month = thoigian.getMonth() + 1;
@@ -34,8 +27,6 @@ var seconds = thoigian.getSeconds();
 var getTime = thoigian.getTime();
 
 var datecurrent = year + '-' + month + '-' + date;
-var time = hour + ':' + minutes + ':' + seconds;
-// var datetime = 'date and time attendance at ' + datecurrent;
 var datetime = parseInt(hour) * 60 * 60 + parseInt(minutes) * 60 + parseInt(seconds);
 export default class CreateClass extends Component {
     static navigationOptions = {
@@ -49,39 +40,14 @@ export default class CreateClass extends Component {
             keyClassCurrent: null,
             timeGetQrCode: datetime,
             play:false,
-            // time:time,
         };
         const idType = this.props.navigation.state.params.thamso;
-        const listStudent = this.props.navigation.state.params.listStudent;
-
         Global.tittle = idType.className;
         Global.siso = parseInt(idType.count);
-    }
-    componentDidMount() {
-        console.log('datetime bằng ', this.state.test);
-        console.log('time bằng ', this.state.time);
-
-        const keyClass = this.props.navigation.state.params.keyClass;
-        const idType = this.props.navigation.state.params.thamso;
-        // console.log('componentDidMount chạy 1');
-        // console.log('datetime check xem', this.state.datetime)
-        // const { timeGetQrCode } = this.state;
-        // firebase.database().ref().child(`Manage_Class/${keyClass}/Attendance/${this.state.datecurrent}`)
-        //     .orderByChild('timeGetQrCode').equalTo({ timeGetQrCode }).once('value', childSnapshot => {
-        //         if (childSnapshot.exists()) {
-        //             Alert.alert(
-        //                 'Thông báo',
-        //                 `Bạn đã điểm danh lớp ${idType.className}, chức năng tạm thời bị vô hiệu hóa !`
-        //             );
-        //             this.props.navigation.navigate('Screen_Handle');
-        //         }
-        //     })
     }
     async changeIDclass() {
         const idType = this.props.navigation.state.params.thamso;
         const keyClass = this.props.navigation.state.params.keyClass;
-        const keyPath = this.props.navigation.state.params.key;
-        var date = new Date();
         var seconds = Date.now();
         try {
 
@@ -127,7 +93,6 @@ Play=async ()=>{
 
         return (
             <View style={{ flex: 1, marginTop: Platform.OS === 'ios' ? 34 : 0 }}>
-                <StatusBar backgroundColor="#03a9f4" barStyle="light-content" />
                 <Tittle {...this.props} />
                 <View style={styles.content}>
                     <View style={styles.container}>
@@ -141,10 +106,8 @@ Play=async ()=>{
                         </View>
                         <View style={styles.viewBtn}>
                             <View style={styles.timer}>
-                                {/* <Text style={{fontFamily:'Simplifica'}}>Thời gian còn lại : 4:50:01</Text> */}
                                 <CountDown
                                     until={0 * 1 + 10}
-                                 
                                     size={23}
                                     onFinish={() => this.changeIDclass()}
                                     digitStyle={{ backgroundColor: '#FFF' }}
@@ -159,7 +122,7 @@ Play=async ()=>{
                                 <View>
                                     <TouchableOpacity style={styles.btn1}>
                                         <Text>
-                                            {keyClass}
+                                            {/* {keyClass} */}
                                         </Text>
                                     </TouchableOpacity>
                                 </View>
@@ -174,7 +137,7 @@ Play=async ()=>{
                                 <View>
                                     <TouchableOpacity style={styles.btn1}>
                                         <Text>
-                                            Button1
+                                            {/* Button1 */}
                                         </Text>
                                     </TouchableOpacity>
                                 </View>
