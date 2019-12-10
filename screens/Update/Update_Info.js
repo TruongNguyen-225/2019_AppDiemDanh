@@ -91,13 +91,13 @@ export default class Update_Info extends Component {
         userData: userData,
         email: this.state.userData.email,
       });
-      console.log ('chưa update', userData);
+      console.log ('chưa update1', userData);
     });
     // this.getDataFromDB();
   }
 
   getDataFromDB () {
-    console.log ('this', this.state.userData.email);
+    // console.log ('this', this.state.userData.email);
     RootRef.orderByChild ('id')
       .equalTo (this.state.userData.id)
       .on ('value', childSnapshot => {
@@ -118,40 +118,10 @@ export default class Update_Info extends Component {
         this.setState ({
           itemData: itemData,
         });
+        // console.log('itemData',this.state.itemData)
       });
-    console.log ('this', this.state.userData);
   }
-  // getUserFromDB () {
-  //   var userData = {};
-
-  //   return new Promise (resolve => {
-  //     RootRef.orderByChild ('email')
-  //       .equalTo (this.state.userData.email)
-  //       .on ('value', childSnapshot => {
-  //         childSnapshot.forEach (doc => {
-  //           userData = {
-  //         id: doc.toJSON ().id,
-  //         email: doc.toJSON ().email,
-  //         MSGV: doc.toJSON ().MSGV,
-  //         fullName: doc.toJSON ().fullName,
-  //         address: doc.toJSON ().numberPhone,
-  //         proofs: doc.toJSON ().proofs,
-  //         sex: doc.toJSON ().sex,
-  //         address: doc.toJSON ().address,
-  //         dateBirthday: doc.toJSON ().dateBirthday,
-  //           };
-  //           resolve (userData);
-  //         });
-
-  //         // console.log('---------------',userData)
-
-  //       });
-
-  //   })
-  //   .then(alert(JSON.stringify(userData)))
-  //   // .then(setItemToAsyncStorage('userData',userData))
-
-  // }
+ 
   getUserFromDB () {
     return new Promise (resolve => {
       RootRef.orderByChild ('email')
@@ -171,7 +141,7 @@ export default class Update_Info extends Component {
               dateBirthday: doc.toJSON ().dateBirthday,
             };
           });
-          console.log (JSON.stringify (userData));
+          // console.log (JSON.stringify (userData));
           resolve (userData);
         });
     });
@@ -244,7 +214,7 @@ checkFomart(){
                   await AsyncStorage.clear ();
                   var userData = await this.getUserFromDB ();
                   setItemToAsyncStorage ('userData', userData);
-                  // console.log ('LOL', userData);
+                  console.log ('LOL', userData);
                 })
                 .catch (() => Alert ('Có lỗi xảy ra !'));
             });
@@ -310,7 +280,7 @@ checkFomart(){
             };
           }),
         });
-        console.log (this.state.imagePickArray);
+        // console.log (this.state.imagePickArray);
       })
       .catch (e => alert (e));
   };

@@ -16,21 +16,18 @@ class FlatListItem extends Component {
       getKey: null,
       datecurrent:datecurrent,
       list_MSSV_Joined:[],
-      listHistoryChild:[],
+      listHistoryChild_Attendanced:[],
       check:false,
     };
   }
   componentDidMount() {
     const idType = this.props.navigation.state.params.thamso;
-
     const keyClass = this.props.navigation.state.params.keyClass;
     var rootRef = firebase.database().ref();
     var urlRef = rootRef.child('Manage_Class/' + keyClass + '/StudentJoin');
-    console.log('key truyền qua là', keyClass)
-    console.log('path-urlRef', urlRef.path);
     urlRef.once('value', childSnapshot => {
       if (childSnapshot.exists()) {
-        const listHistoryChild = [];
+        const listHistoryChild_Attendanced = [];
         const list_MSSV_Joined = [];
         childSnapshot.forEach(doc => {
           var stt = 0;
@@ -44,15 +41,14 @@ class FlatListItem extends Component {
         this.setState({
           list_MSSV_Joined:list_MSSV_Joined,
         });
-        firebase.database().ref('Manage_Class/'+idType.key+'/Attendance/2019-12-1').orderByChild('MSSV').on('value',(value)=>{
+        firebase.database().ref('Manage_Class/'+idType.key+'/Attendance/'+this.state.datecurrent).orderByChild('MSSV').on('value',(value)=>{
           if(value.exists()){
             value.forEach(element =>{
               if( typeof element.val().MSSV != 'undefined'){
-                listHistoryChild.push(element.val().MSSV)
+                listHistoryChild_Attendanced.push(element.val().MSSV)
               }
             })
-            this.setState({listHistoryChild:listHistoryChild})
-            console.log('in ra list', this.state.listHistoryChild)
+            this.setState({listHistoryChild_Attendanced:listHistoryChild_Attendanced})
           }
       })
       }
@@ -77,16 +73,17 @@ class FlatListItem extends Component {
             </View>
             <View style={[styles.styleColumn, { flex: 5, }]}>
               <Text style={{ fontSize: 14, fontWeight: '700', opacity: .7, }}>
-                {this.props.item.email}
+                {this.props.item.fullName}
               </Text>
             </View>
             <View style={[styles.styleColumn, { flex: 1, }]}>
-              <Text style={{ fontSize: 12, fontWeight: '700', opacity: .7, }}>
-                </Text>
+            {this.state.listHistoryChild_Attendanced.includes(this.props.item.MSSV)?
+              <Text style={{ fontSize: 12, fontWeight: '700', opacity: .7, }}>✔</Text> :<Text>❌</Text>}
             </View>
           </View>
         </TouchableOpacity>
       </View>
+      
     );
   }
 }
@@ -116,12 +113,21 @@ const style = StyleSheet.create({
   styleColumn: { alignItems: 'center', width: WIDTH * 0.1, borderRightWidth: 0.5, borderRightColor: 'gray', height: HEIGHT / 15, justifyContent: 'center' },
 
 });
-var thoigian = new Date();
+var thoigian = new Date ();
+var date = thoigian.getDate ();
+var month = thoigian.getMonth () + 1;
+var year = thoigian.getFullYear ();
+var hour = thoigian.getHours();
+var minutes = thoigian.getMinutes();
+var seconds = thoigian.getSeconds();
+var getTime = thoigian.getTime();
 
-var date = thoigian.getDate();
-var month = thoigian.getMonth() + 1;
-var year = thoigian.getFullYear();
-var datecurrent = year + '-' + month + '-' + date;
+if( date < 10)
+{
+  date = '0'+date;
+  console.log(date);
+}
+var datecurrent = date + '-' + month + '-' + year;
 
 export default class ListStudentAttendance extends Component {
   static navigationOptions = {
@@ -135,6 +141,7 @@ export default class ListStudentAttendance extends Component {
       list_MSSV_Joined:[],
       listHistory: [],
       listHistoryChild: [],
+      listHistoryChild_Attendanced:[],
       datecurrent: datecurrent,
       tittle: '',
       router: 'HomeScreen',
@@ -145,7 +152,7 @@ export default class ListStudentAttendance extends Component {
     Global.tittle = idType.className;
   }
   componentDidMount() {
-    this.getListStudent();
+    this.getListStudent_Attendanced();
     this.getListHistory();
     this.getListStudent_Joined();
   }
@@ -213,36 +220,44 @@ export default class ListStudentAttendance extends Component {
       }
     });
   }
-  getListStudent() {
+  getListStudent_Attendanced() {
+    const idType = this.props.navigation.state.params.thamso;
     const keyClass = this.props.navigation.state.params.keyClass;
     var rootRef = firebase.database().ref();
-    var urlRef = rootRef.child(`Manage_Class/${keyClass}/Attendance/${this.state.datecurrent}`);
-    urlRef.on('value', childSnapshot => {
+    var urlRef = rootRef.child('Manage_Class/' + keyClass + '/StudentJoin');
+    urlRef.once('value', childSnapshot => {
       if (childSnapshot.exists()) {
-        const listStudent = [];
+        const listHistoryChild_Attendanced = [];
+        const list_MSSV_Joined = [];
         childSnapshot.forEach(doc => {
           var stt = 0;
           if (typeof doc.toJSON().email != 'undefined') {
             stt = 1;
           }
           if (stt == 1) {
-            listStudent.push({
-              email: doc.toJSON().email,
-              MSSV: doc.toJSON().MSSV,
-              id: doc.toJSON().id,
-            });
+            list_MSSV_Joined.push(doc.toJSON().MSSV);
           }
         });
         this.setState({
-          listStudent: listStudent
+          list_MSSV_Joined:list_MSSV_Joined,
         });
+        firebase.database().ref('Manage_Class/'+idType.key+'/Attendance/'+this.state.datecurrent).orderByChild('MSSV').on('value',(value)=>{
+          if(value.exists()){
+            value.forEach(element =>{
+              if( typeof element.val().MSSV != 'undefined'){
+                listHistoryChild_Attendanced.push(element.val().MSSV)
+              }
+            })
+            this.setState({listHistoryChild_Attendanced:listHistoryChild_Attendanced})
+          }
+      })
       }
     });
   }
-
   render() {
     const idType = this.props.navigation.state.params.thamso;
-    const { listHistory } = this.state;
+    const { listHistory,listHistoryChild_Attendanced } = this.state;
+    let vang = idType.count - listHistoryChild_Attendanced.length;
     return (
       <View style={styles.container}>
         <Tittle {...this.props} />
@@ -306,7 +321,7 @@ export default class ListStudentAttendance extends Component {
         <View style={styles.viewResult}>
           <View style={styles.viewResultChild}>
             <Text style={styles.textResult}>Sĩ số : {idType.count} </Text>
-            <Text style={styles.textResult}>Vắng :</Text>
+            <Text style={styles.textResult}>Vắng : {vang}</Text>
           </View>
         </View>
       </View>
@@ -355,13 +370,13 @@ const styles = StyleSheet.create({
   },
   viewResultChild: {
     flexDirection: 'row',
-    marginHorizontal: WIDTH / 14,
+    justifyContent:'center',
+    alignItems:'center'
   },
   header: {
     height: HEIGHT / 15,
     backgroundColor: '#537791',
     width: WIDTH * 0.97,
-    // borderLeftWidth: 0.5, borderLeftColor: 'gray',
     borderTopColor: 'gray',
     borderTopWidth: 0.5,
     alignItems: 'center',

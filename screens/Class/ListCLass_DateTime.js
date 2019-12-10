@@ -4,22 +4,17 @@ import {
   Text,
   Dimensions,
   StyleSheet,
-  TextInput,
   Image,
   FlatList,
   TouchableOpacity
 } from 'react-native';
 import firebase from 'react-native-firebase';
 import Global from '../../constants/global/Global';
-import OfflineNotice from '../Header/OfflineNotice';
 import Tittle from '../Header/Tittle';
 import school from '../../assets/icons/clock-icon-5679.jpg';
 
-var system = firebase.database().ref().child('Manage_Class');
-
 const { width: WIDTH } = Dimensions.get('window');
 const { height: HEIGHT } = Dimensions.get('window');
-
 class FlatListItem extends Component {
   constructor(props) {
     super(props);
@@ -35,7 +30,6 @@ class FlatListItem extends Component {
   getListStudent() {
     var rootRef = firebase.database().ref();
     var urlRef = rootRef.child('Manage_Class/' + this.props.item.key + '/StudentJoin');
-    // console.log ('path-urlRef', urlRef.path);
     urlRef.once('value', childSnapshot => {
       if (childSnapshot.exists()) {
         const listStudent = [];
@@ -57,12 +51,8 @@ class FlatListItem extends Component {
             return a.className < b.className;
           }),
         });
-        console.log('kết quả ', this.state.listStudent);
       }
     });
-  }
-  showInfoClass() {
-    alert("chưa làm kịp :v")
   }
   render() {
     return (
@@ -71,7 +61,6 @@ class FlatListItem extends Component {
           style={style.viewFlatList}
           onPress={async () => {
             await this.props.navigation.navigate('ShowAllStudentWithResultSearch', {
-              // listStudent: this.state.listStudent,
               ngaydiemdanh: this.props.item.dateTimeAttendance, keyClass: this.props.item.keyClass, infoClass: this.props.item.infoClass,
             });
           }}>

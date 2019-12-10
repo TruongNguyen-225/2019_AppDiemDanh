@@ -120,7 +120,7 @@ class FlatListItem extends Component {
                 <Text style={{ fontSize: 12, fontWeight: '700', fontStyle:'italic', color:'#448aff' }}>
                   {this.props.item.isChecked === 0 ? <Text>Đang Xử Lý</Text> : this.props.item.isChecked === 1 ? <Text>Lớp Đã Chốt , Có Thể Điểm Danh</Text> :<Text></Text>}
                 </Text>
-               <Text style={{fontSize:12, color:'#455a64', fontStyle:'italic'}}>{this.props.item.key}</Text>
+               <Text style={{fontSize:12, color:'#455a64', fontStyle:'italic'}}> {this.props.item.dateStart} : {this.props.item.dateFinish}</Text>
               </View>
               <Image
                 source={left}
@@ -155,21 +155,27 @@ const style = StyleSheet.create({
     color:'gray',
   }
 });
-var thoigian = new Date();
-var date = thoigian.getDate();
-var month = thoigian.getMonth() + 1;
-var year = thoigian.getFullYear();
+var thoigian = new Date ();
+var date = thoigian.getDate ();
+var month = thoigian.getMonth () + 1;
+var year = thoigian.getFullYear ();
 var hour = thoigian.getHours();
 var minutes = thoigian.getMinutes();
 var seconds = thoigian.getSeconds();
-var datecurrent = year + '-' + month + '-' + date;
-var time = hour + ':' + minutes + ':' + seconds;
+var getTime = thoigian.getTime();
 
+if( date < 10)
+{
+  date = '0'+date;
+  console.log(date);
+}
+var datecurrent = date + '-' + month + '-' + year;
+var time = hour +':'+ minutes +':'+ seconds;
 export default class CreateClass extends Component {
   static navigationOptions = {
     header: null,
   };
-  state = { currentUser: null };
+  // state = { currentUser: null };
   constructor(props) {
     super(props);
     this.state = {
@@ -195,55 +201,29 @@ export default class CreateClass extends Component {
       dateFinish:'',
       dateStart:'',
       numberTarget :0,
+      numberSession:0,
+      currentUser:null,
+      userData_temp:[],
     };
+    // const { currentUser } = firebase.auth();
+    // this.setState({ currentUser });
     this._onPressAdd = this._onPressAdd.bind(this);
     Global.arrayClass = this.state.class;
-    Global.tittle = this.state.tittle;
-
+    Global.tittle =this.state.tittle
+    // this.getUserData();
   }
 
-  async componentDidMount() {
+   componentDidMount() {
     Global.router = this.state.router;
+    this.getListClass();
     this.getUserData();
-    const { currentUser } = firebase.auth();
-    this.setState({ currentUser });
-    // lấy xuống các lớp học đang trong quá trình xử lý
-    await system.orderByChild('status').equalTo(this.state.status)
-      .on('value', childSnapshot => {
-        const classRoom = [];
-        if(childSnapshot.exists()){
-          childSnapshot.forEach(doc => {
-            classRoom.push({
-              key: doc.key,
-              status: doc.toJSON().status,
-              _id: doc.toJSON()._id,
-              className: doc.toJSON().className,
-              class: doc.toJSON().class,
-              subject: doc.toJSON().subject,
-              count: doc.toJSON().count,
-              teacher: doc.toJSON().teacher,
-              isChecked:doc.toJSON().isChecked,
-              MSGV:doc.toJSON().MSGV,
-              dateFinish:doc.toJSON().dateFinish,
-              dateStart:doc.toJSON().dateStart,
-              numberTarget:doc.toJSON().numberTarget,
-            });
-            this.setState({
-              class: classRoom.sort((a, b) => {
-                return a.className > b.className;
-              }),
-              loading: true,
-            });
-          });
-        }
-      });
+
   }
   getUserData = async () => {
     await AsyncStorage.getItem('userData').then(value => {
       const userData = JSON.parse(value);
       this.setState({ userData: userData });
     });
-
   };
   onPressAdd = () => {
     var className = this.state.newClassName.concat(' - ').concat(this.state.subject).toUpperCase();
@@ -253,6 +233,7 @@ export default class CreateClass extends Component {
       this.state.subject.trim() === '' ||
       this.state.count.trim() === '' ||
       this.state.numberTarget.trim() === '' ||
+      this.state.numberSession.trim() === '' ||
       this.state.dateStart.trim() === '' ||
       this.state.dateFinish.trim() === ''
     ) {
@@ -264,20 +245,22 @@ export default class CreateClass extends Component {
     }else if (checkRegExp.test(this.state.numberTarget) == false) {
       Alert.alert('Lỗi', 'Số tín chỉ là chữ số nguyên !');
       return;
+    }else if (checkRegExp.test(this.state.numberSession) == false) {
+      Alert.alert('Lỗi', 'Số tiết là chữ số nguyên !');
+      return;
+    }else if (parseInt(this.state.numberSession) <= 0 ) {
+      Alert.alert('Lỗi', 'Số tiết là chữ số nguyên lớn hơn 0 !');
+      return;
+    }else if (parseInt(this.state.numberTarget) <= 0 ) {
+      Alert.alert('Lỗi', 'Số tín chỉ là chữ số nguyên lớn hơn 0 !');
+      return;
     }
     // else if (this.state.dateStart.getTime() > this.state.dateFinish.getTime()) {
     //   Alert.alert('Lỗi', 'Ngày kết thúc không thể nhỏ hơn hoặc bằng ngày bắt đầu học !');
     //   return;
     // }
     try {
-      system
-        .orderByChild('className')
-        .equalTo(
-          this.state.newClassName
-            .concat(' - ')
-            .concat(this.state.subject)
-          .toUpperCase ()
-        )
+      system.orderByChild('className').equalTo(this.state.newClassName.concat(' - ').concat(this.state.subject).toUpperCase ())
         .once('value', snapshot => {
           if (snapshot.exists()) {
             Alert.alert(
@@ -293,7 +276,7 @@ export default class CreateClass extends Component {
                 subject: this.state.subject,
                 className: className,
                 count: this.state.count,
-                gmail_teacher: this.state.currentUser.email,
+                gmail_teacher: this.state.userData.email,
                 teacher: this.state.userData.fullName,
                 member: this.state.member,
                 datecurrent: this.state.datecurrent,
@@ -301,6 +284,7 @@ export default class CreateClass extends Component {
                 isChecked: this.state.isChecked,
                 MSGV : this.state.userData.MSGV,
                 numberTarget: this.state.numberTarget,
+                numberSession:this.state.numberSession,
                 dateStart: this.state.dateStart,
                 dateFinish:this.state.dateFinish,
               })
@@ -312,6 +296,7 @@ export default class CreateClass extends Component {
                   dateStart:'',
                   dateFinish:'',
                   numberTarget:'',
+                  numberSession:'',
                 })
               );
           }
@@ -320,6 +305,47 @@ export default class CreateClass extends Component {
       alert(e);
     }
   };
+  getListClass(){
+    const { currentUser } = firebase.auth();
+    console.log('curentUser1',currentUser)
+ // lấy xuống các lớp học đang trong quá trình xử lý
+ system.orderByChild('status').equalTo(this.state.status)
+ .on('value', childSnapshot => {
+   const classRoom = [];
+   var current = currentUser && currentUser.email;
+   if(childSnapshot.exists()){
+   system.orderByChild('gmail_teacher').equalTo(current).on('value',value =>{
+     if(value.exists()){
+       value.forEach(doc => {
+         classRoom.push({
+           key: doc.key,
+           status: doc.toJSON().status,
+           _id: doc.toJSON()._id,
+           className: doc.toJSON().className,
+           class: doc.toJSON().class,
+           subject: doc.toJSON().subject,
+           count: doc.toJSON().count,
+           teacher: doc.toJSON().teacher,
+           isChecked:doc.toJSON().isChecked,
+           MSGV:doc.toJSON().MSGV,
+           dateFinish:doc.toJSON().dateFinish,
+           dateStart:doc.toJSON().dateStart,
+           numberTarget:doc.toJSON().numberTarget,
+           numberSession:doc.toJSON().numberSession,
+         });
+         this.setState({
+           class: classRoom.sort((a, b) => {
+             return a.className > b.className;
+           }),
+           loading: true,
+         });
+       });
+     }
+   })
+     
+   }
+ });
+  }
   _onPressAdd() {
     this.refs.addModal.showAddModal();
   }
@@ -409,6 +435,26 @@ export default class CreateClass extends Component {
                   this.setState({ numberTarget: text });
                 }}
                 value={this.state.numberTarget}
+              />
+               <View
+                style={{ marginRight: 10, width: 42, height: 42 }}
+                underlayColor="tomato"
+              >
+                <Text />
+              </View>
+            </View>
+            <View style={styles.viewCreateClass}>
+              <TextInput
+                style={styles.viewTextInput}
+                keyboardType="default"
+                placeholderTextColor="gray"
+                placeholder="Nhập số tiết học trong 1 ca học"
+                autoCapitalize="none"
+                fontStyle="italic"
+                onChangeText={text => {
+                  this.setState({ numberSession: text });
+                }}
+                value={this.state.numberSession}
               />
                <View
                 style={{ marginRight: 10, width: 42, height: 42 }}

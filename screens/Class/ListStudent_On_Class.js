@@ -110,16 +110,21 @@ const style = StyleSheet.create({
   styleColumn: { alignItems: 'center', width: WIDTH * 0.1, borderRightWidth: 0.5, borderRightColor: 'gray', height: HEIGHT / 15, justifyContent: 'center' },
 
 });
-var thoigian = new Date();
-var date = thoigian.getDate();
-var month = thoigian.getMonth() + 1;
-var year = thoigian.getFullYear();
+var thoigian = new Date ();
+var date = thoigian.getDate ();
+var month = thoigian.getMonth () + 1;
+var year = thoigian.getFullYear ();
 var hour = thoigian.getHours();
 var minutes = thoigian.getMinutes();
 var seconds = thoigian.getSeconds();
+var getTime = thoigian.getTime();
 
-var datecurrent = year + '/' + month + '/' + date;
-var time = hour + ':' + minutes + ':' + seconds;
+if( date < 10)
+{
+  date = '0'+date;
+  console.log(date);
+}
+var datecurrent = date + '-' + month + '-' + year;
 export default class ListStudent_On_Class extends Component {
   static navigationOptions = {
     header: null,
@@ -208,7 +213,7 @@ export default class ListStudent_On_Class extends Component {
             </View>
             <View style={[styles.styleColumn, { flex: 1 }]}>
               <Text style={{ fontSize: 12, fontWeight: '700', opacity: .7, }}>
-                Vắng
+                Vắng (Ca)
                 </Text>
             </View>
           </View>

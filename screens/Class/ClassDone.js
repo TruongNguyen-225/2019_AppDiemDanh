@@ -126,35 +126,48 @@ export default class CreateClass extends Component {
     this.getUserData ();
     const {currentUser} = firebase.auth ();
     this.setState ({currentUser});
-    //lấy danh sách lớp ĐÃ CHỐT về
-    await system.orderByChild('status').equalTo(this.state.closeClass)
-    .on ('value', childSnapshot => {
-      const classRoom = [];
-      childSnapshot.forEach (doc => {
-        classRoom.push ({
-          key: doc.key,
-          status: doc.toJSON ().status,
-          _id: doc.toJSON ()._id,
-          className: doc.toJSON ().className,
-          class: doc.toJSON ().class,
-          subject: doc.toJSON ().subject,
-          count: doc.toJSON ().count,
-          teacher: doc.toJSON ().teacher,
-          student_join: this.state.student_join,
-          datecurrent: doc.toJSON().datecurrent,
-          time: doc.toJSON().time,
-          isChecked: doc.toJSON().isChecked,
-        });
-        this.setState ({
-          class: classRoom
-        });
-      });
-    });
+   // lấy xuống các lớp học đã chốt
+   await system.orderByChild('status').equalTo(this.state.closeClass)
+   .on('value', childSnapshot => {
+     const classRoom = [];
+     if(childSnapshot.exists()){
+     system.orderByChild('gmail_teacher').equalTo(currentUser&& currentUser.email).on('value',value =>{
+       if(value.exists()){
+         value.forEach(doc => {
+           classRoom.push({
+             key: doc.key,
+             status: doc.toJSON().status,
+             _id: doc.toJSON()._id,
+             className: doc.toJSON().className,
+             class: doc.toJSON().class,
+             subject: doc.toJSON().subject,
+             count: doc.toJSON().count,
+             teacher: doc.toJSON().teacher,
+             isChecked:doc.toJSON().isChecked,
+             MSGV:doc.toJSON().MSGV,
+             dateFinish:doc.toJSON().dateFinish,
+             dateStart:doc.toJSON().dateStart,
+             numberTarget:doc.toJSON().numberTarget,
+             numberSession:doc.toJSON().numberSession,
+           });
+           this.setState({
+             class: classRoom.sort((a, b) => {
+               return a.className > b.className;
+             }),
+             loading: true,
+           });
+         });
+       }
+     })
+       
+     }
+   });
   }
   getUserData = async () => {
     await AsyncStorage.getItem ('userData').then (value => {
       const userData = JSON.parse (value);
       this.setState ({userData: userData});
+      console.log('USER',this.state.userData)
     });
   };
   render () {

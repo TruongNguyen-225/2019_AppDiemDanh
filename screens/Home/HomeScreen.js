@@ -69,10 +69,8 @@ export default class HomeScreen extends Component {
     await AsyncStorage.getItem('userData').then(value => {
       const userData = JSON.parse(value);
       this.setState({userData: userData});
+      console.log('aaaa',this.state.userData)
     });
-  };
-  onSetState = () => {
-    alert('hahah');
   };
   onGoToSearch() {
     () => this.props.navigation.navigate('Search');
@@ -134,7 +132,7 @@ export default class HomeScreen extends Component {
                       <Image source={icons_add} style={{width: '80%', height: '80%'}} />
                     </View>
                     <Text style={{fontSize: 15, flexWrap: 'wrap'}}>
-                      {/* Lịch Sử Điểm Danh */}
+                      Biểu Đồ Thống Kê
                     </Text>
                   </TouchableOpacity>
                 </View>
@@ -147,7 +145,7 @@ export default class HomeScreen extends Component {
                       <Image source={icons_add} style={{width: '80%', height: '80%'}} />
                     </View>
                     <Text style={{fontSize: 15, flexWrap: 'wrap'}}>
-                      {/* Điểm Danh Nhanh */}
+                     Đang Phát Triển
                     </Text>
                   </TouchableOpacity>
                 </View>
@@ -158,7 +156,7 @@ export default class HomeScreen extends Component {
                       <Image source={icons_add} style={{width: '80%', height: '80%'}} />
                     </View>
                     <Text style={{fontSize: 15, flexWrap: 'wrap'}}>
-                      {/* Tạo Lớp Mới */}
+                    Đang Phát Triển
                     </Text>
                   </TouchableOpacity>
                 </View>

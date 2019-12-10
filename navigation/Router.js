@@ -29,7 +29,7 @@ import QRcode from '../screens/Class/Attendance_handle/QRcode';
 import ListCLass_DateTime from '../screens/Class/ListCLass_DateTime';
 import ShowAllStudentWithResultSearch from '../screens/Class/ShowAllStudentWithResultSearch';
 import Student_Profile from '../screens/Class/Student_Profile';
-
+import My_Profile from '../screens/Update/My_Profile';
 // SEARCH
 import SearchScreen from '../screens/Search/SearchScreen';
 
@@ -69,6 +69,7 @@ export const RootStack = createStackNavigator (
     ListCLass_DateTime,
     ShowAllStudentWithResultSearch,
     Student_Profile,
+    My_Profile
   },
   {
     initialRouteName: 'HomeScreen',
@@ -89,6 +90,7 @@ export const StackManageInfo = createStackNavigator (
     Main,
     Update_Info,
     Update_Manage_Class,
+    My_Profile
   
   },
   {

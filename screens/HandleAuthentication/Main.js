@@ -19,7 +19,7 @@ import Global from '../../constants/global/Global';
 
 import icons_logout from '../../assets/icons/icons8-shutdown-96.png';
 import settings from '../../assets/icons/icons8-settings-96.png';
-import history from '../../assets/icons/icons8-order-history-96.png';
+import profile1 from '../../assets/icons/icons8-more-info-96.png';
 import profile from '../../assets/icons/icons8-contact-details-96.png';
 import delete_icons from '../../assets/icons/icons8-denied-96.png';
 import gif from '../../assets/icons/giphy.gif';
@@ -205,6 +205,23 @@ export default class Main extends Component {
           ])}
         >
           <View>
+          <View>
+              <TouchableOpacity
+                onPress={() => this.props.navigation.navigate ('My_Profile')}
+              >
+                <View style={styles.rowCreateClass}>
+                  <View style={styles.viewImgIcon}>
+                    <Image source={profile1} style={{height: 40, width: 40}} />
+                  </View>
+                  <View style={styles.viewText}>
+                    <Text style={styles.textDirector}>
+                      Trang Cá Nhân
+                    </Text>
+                    <View style={{top: 2 * (HEIGHT / 10)}} />
+                  </View>
+                </View>
+              </TouchableOpacity>
+            </View>
             <View>
               <TouchableOpacity
                 onPress={() => this.props.navigation.navigate ('Update_Info')}

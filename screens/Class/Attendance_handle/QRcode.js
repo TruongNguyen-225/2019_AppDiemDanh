@@ -17,16 +17,24 @@ import CountDown from 'react-native-countdown-component';
 import {WToast} from 'react-native-smart-tip'
 
 const { width: WIDTH } = Dimensions.get('window');
-var thoigian = new Date();
-var date = thoigian.getDate();
-var month = thoigian.getMonth() + 1;
-var year = thoigian.getFullYear();
+
+
+var thoigian = new Date ();
+var date = thoigian.getDate ();
+var month = thoigian.getMonth () + 1;
+var year = thoigian.getFullYear ();
 var hour = thoigian.getHours();
 var minutes = thoigian.getMinutes();
 var seconds = thoigian.getSeconds();
 var getTime = thoigian.getTime();
 
-var datecurrent = year + '-' + month + '-' + date;
+if( date < 10)
+{
+  date = '0'+date;
+  console.log(date);
+}
+var datecurrent = date + '-' + month + '-' + year;
+
 var datetime = parseInt(hour) * 60 * 60 + parseInt(minutes) * 60 + parseInt(seconds);
 export default class CreateClass extends Component {
     static navigationOptions = {

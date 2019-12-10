@@ -13,7 +13,6 @@ import {
 import firebase from 'react-native-firebase';
 import AsyncStorage from '@react-native-community/async-storage';
 import Global from '../../constants/global/Global';
-import OfflineNotice from '../Header/OfflineNotice';
 import Swipeout from 'react-native-swipeout';
 import Tittle from '../Header/Tittle';
 
@@ -51,7 +50,7 @@ class FlatListItem extends Component {
           onPress: () => {
             this.props.navigation.navigate('Update_Manage_Class', { thamso: this.props.item })
           },
-          text: 'Chỉnh Sửa TT Lớp',
+          text: 'Edit',
           type: 'primary',
         },
         {
@@ -82,7 +81,7 @@ class FlatListItem extends Component {
               { cancelable: true }
             );
           },
-          text: 'Xóa Lớp',
+          text: 'Detele',
           type: 'delete',
         },
 
@@ -113,7 +112,8 @@ class FlatListItem extends Component {
                 <Text style={{fontSize: 12,fontWeight: '700',fontStyle: 'italic',color: '#448aff'}}>
                   {this.props.item.isChecked === 0 ? <Text>Đang Xử Lý</Text> : this.props.item.isChecked === 1 ? <Text>Lớp Đã Chốt , Có Thể Điểm Danh</Text> :<Text></Text>}
                 </Text>
-                <Text style={{ fontSize: 12, color: '#455a64', fontStyle: 'italic' }}>{this.props.item.time}</Text>
+                <Text style={{fontSize:12, color:'#455a64', fontStyle:'italic'}}> {this.props.item.dateStart} : {this.props.item.dateFinish}</Text>
+
               </View>
               <Image  source={left}
                 style={{width: 20,height: 20,tintColor: '#333',marginRight: 15,}}
@@ -174,11 +174,14 @@ export default class CreateClass extends Component {
     this.getUserData();
     const { currentUser } = firebase.auth();
     this.setState({ currentUser });
-    //lấy danh sách lớp đang xử lý về
-    await system.orderByChild('status').equalTo(this.state.status)
-      .on('value', childSnapshot => {
-        const classRoom = [];
-        childSnapshot.forEach(doc => {
+  // lấy xuống các lớp học đang trong quá trình xử lý
+  await system.orderByChild('status').equalTo(this.state.status)
+  .on('value', childSnapshot => {
+    const classRoom = [];
+    if(childSnapshot.exists()){
+    system.orderByChild('gmail_teacher').equalTo(currentUser&& currentUser.email).on('value',value =>{
+      if(value.exists()){
+        value.forEach(doc => {
           classRoom.push({
             key: doc.key,
             status: doc.toJSON().status,
@@ -188,10 +191,12 @@ export default class CreateClass extends Component {
             subject: doc.toJSON().subject,
             count: doc.toJSON().count,
             teacher: doc.toJSON().teacher,
-            student_join: this.state.student_join,
-            datecurrent: doc.toJSON().datecurrent,
-            time: doc.toJSON().time,
-            isChecked: doc.toJSON().isChecked,
+            isChecked:doc.toJSON().isChecked,
+            MSGV:doc.toJSON().MSGV,
+            dateFinish:doc.toJSON().dateFinish,
+            dateStart:doc.toJSON().dateStart,
+            numberTarget:doc.toJSON().numberTarget,
+            numberSession:doc.toJSON().numberSession,
           });
           this.setState({
             class: classRoom.sort((a, b) => {
@@ -200,12 +205,17 @@ export default class CreateClass extends Component {
             loading: true,
           });
         });
-      });
+      }
+    })
+      
+    }
+  });
   }
   getUserData = async () => {
     await AsyncStorage.getItem('userData').then(value => {
       const userData = JSON.parse(value);
       this.setState({ userData: userData });
+      console.log('MSGV',this.state.userData)
     });
   };
   async onSearch() {
@@ -263,18 +273,13 @@ export default class CreateClass extends Component {
       const flatListSearch = (
         <FlatList
         data={this.state.class}
-        // data={arrayInitClass}
         renderItem={({item, index}) => {
           return (
             <TouchableOpacity
               style={styles.viewFlatList}
-              // onPress={() =>
-              //   this.props.navigation.navigate ('FollowClass', {thamso: item})}
             >
               <View style={{flexDirection: 'row', alignItems: 'center',justifyContent:'space-between',flex:1}}>
                 <View>
-                {/* <Image source={school} style={{width: 50, height: 50}} /> */}
-
                 </View>
                 <View style={{justifyContent:'flex-start',width:WIDTH*0.6}}>
                   <Text
@@ -287,7 +292,6 @@ export default class CreateClass extends Component {
                   </Text>
                 </View>
                 <View>
-                {/* <Image source={goto} style={{width: 20, height: 20,tintColor:'#333',marginRight:25}} /> */}
                 </View>
               </View>
             </TouchableOpacity>
@@ -296,9 +300,7 @@ export default class CreateClass extends Component {
         keyExtractor={(item, id) => item.id}
       />
       )
-      // console.log('set ngược lại cho class', this.state.listClassNew)
     }
-    console.log("key =========",arrayInitClass);
   }
   render() {
     const { currentUser } = this.state;

@@ -14,25 +14,49 @@ class FlatListItem extends Component {
       listStudent: [],
       textFail: '',
       getKey: null,
+      datecurrent:datecurrent,
+      list_MSSV_Joined:[],
+      listHistoryChild_Attendanced:[],
+      check:false,
     };
   }
-  render() {
-    const tableData = [];
-    for (let i = 0; i < 20; i += 1) {
-      const rowData = [];
-      for (let j = 0; j < 5; j += 1) {
-        rowData.push(`${i}${j}`);
+  componentDidMount() {
+    // const idType = this.props.navigation.state.params.thamso;
+    const keyClass = this.props.navigation.state.params.keyClass;
+    console.log('in ra keyClass',keyClass);
+
+    const ngaydiemdanh = this.props.navigation.state.params.ngaydiemdanh;
+
+    var rootRef = firebase.database().ref();
+    var urlRef = rootRef.child('Manage_Class/' + keyClass + '/StudentJoin');
+    urlRef.once('value', childSnapshot => {
+      if (childSnapshot.exists()) {
+        const listHistoryChild_Attendanced = [];
+        firebase.database().ref('Manage_Class/'+keyClass+'/Attendance/'+ngaydiemdanh).orderByChild('MSSV').on('value',(value)=>{
+          if(value.exists()){
+            value.forEach(element =>{
+              if( typeof element.val().MSSV != 'undefined'){
+                listHistoryChild_Attendanced.push(element.val().MSSV)
+              }
+            })
+            this.setState({listHistoryChild_Attendanced:listHistoryChild_Attendanced})
+            console.log('in ra thư xem', this.state.listHistoryChild_Attendanced.length)
+          }
+      })
       }
-      tableData.push(rowData);
-    }
+    });
+
+  }
+
+  render() {
     return (
       <View style={style.viewOneClass}>
         <TouchableOpacity
           style={style.viewFlatList}
         >
-          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', flex: 1, }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', flex: 1,borderBottomWidth:1 ,borderBottomColor: 'gray'}}>
             <View style={[styles.styleColumn, { flex: 1, borderLeftWidth: 0.5, borderLeftColor: 'gray', }]}>
-              <Text>1</Text>
+              <Text>{(this.props.index)+1}</Text>
             </View>
             <View style={[styles.styleColumn, { flex: 3, }]}>
               <Text style={{ fontSize: 12, fontWeight: '700', opacity: .7, }}>
@@ -41,17 +65,17 @@ class FlatListItem extends Component {
             </View>
             <View style={[styles.styleColumn, { flex: 5, }]}>
               <Text style={{ fontSize: 14, fontWeight: '700', opacity: .7, }}>
-                {this.props.item.email}
+                {this.props.item.fullName}
               </Text>
             </View>
             <View style={[styles.styleColumn, { flex: 1, }]}>
-              <Text style={{ fontSize: 12, fontWeight: '700', opacity: .7, }}>
-                ✔
-                </Text>
+            {this.state.listHistoryChild_Attendanced.includes(this.props.item.MSSV)?
+              <Text style={{ fontSize: 12, fontWeight: '700', opacity: .7, }}>✔</Text> :<Text>❌</Text>}
             </View>
           </View>
         </TouchableOpacity>
       </View>
+      
     );
   }
 }
@@ -63,8 +87,6 @@ const style = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     width: WIDTH * 0.97,
-    borderBottomColor: 'gray',
-    borderBottomWidth: 0.5,
   },
   viewFlatList: {
     flexDirection: 'row',
@@ -81,16 +103,18 @@ const style = StyleSheet.create({
   styleColumn: { alignItems: 'center', width: WIDTH * 0.1, borderRightWidth: 0.5, borderRightColor: 'gray', height: HEIGHT / 15, justifyContent: 'center' },
 
 });
-var thoigian = new Date();
-var date = thoigian.getDate();
-var month = thoigian.getMonth() + 1;
-var year = thoigian.getFullYear();
-var hour = thoigian.getHours();
-var minutes = thoigian.getMinutes();
-var seconds = thoigian.getSeconds();
+var thoigian = new Date ();
+var date = thoigian.getDate ();
+var month = thoigian.getMonth () + 1;
+var year = thoigian.getFullYear ();
+if( date < 10)
+{
+  date = '0'+date;
+  console.log(date);
+}
+var datecurrent = date + '-' + month + '-' + year;
 
-var datecurrent = year + '-' + month + '-' + date;
-var time = hour + ':' + minutes + ':' + seconds;
+
 export default class ListStudentAttendance extends Component {
   static navigationOptions = {
     header: null,
@@ -99,121 +123,139 @@ export default class ListStudentAttendance extends Component {
     super(props);
     this.state = {
       listStudent: [],
+      listStudent_Joined:[],
+      list_MSSV_Joined:[],
       listHistory: [],
       listHistoryChild: [],
+      listHistoryChild_Attendanced:[],
       datecurrent: datecurrent,
-      tittle: "DANH SÁCH HS ĐÃ ĐIỂM DANH",
+      tittle: '',
       router: 'HomeScreen',
+      keyClass:"",
     };
-    // const ngaydiemdanh = this.props.navigation.state.params.ngaydiemdanh;
-    // const keyClass = this.props.navigation.state.params.keyClass;
-    const infoClass = this.props.navigation.state.params.infoClass;
     Global.router = this.state.router;
-    Global.tittle = this.state.tittle;
-    Global.siso = parseInt (infoClass.count);
   }
   componentDidMount() {
-    this.getListStudent();
+    this.getListStudent_Attendanced();
+    this.getListStudent_Joined();
   }
-  getListStudent() {
+  getListHistory() {
     const keyClass = this.props.navigation.state.params.keyClass;
-    const ngaydiemdanh = this.props.navigation.state.params.ngaydiemdanh;
     var rootRef = firebase.database().ref();
-    var urlRef = rootRef.child(`Manage_Class/${keyClass}/Attendance/${ngaydiemdanh}`);
-    urlRef.on('value', childSnapshot => {
+    var urlRef = rootRef.child(`Manage_Class/${keyClass}/Attendance`);
+
+    urlRef.once('value').then((snapshot) => {
+      const listHistory = [];
+      snapshot.forEach(doc => {
+        const listHistoryChild = [];
+        listHistory.push({
+          dateTimeAttendance: doc.key,
+          keyClass:this.props.navigation.state.params.keyClass,
+          infoClass: this.props.navigation.state.params.thamso,
+        })
+        doc.forEach(e => {
+          listHistoryChild.push({
+            email: e.toJSON().email,
+          })
+        })
+        this.setState({
+          listHistoryChild
+        })
+      });
+      this.setState({ listHistory: listHistory })
+    },
+    );
+  }
+  getListStudent_Joined() {
+    const keyClass = this.props.navigation.state.params.keyClass;
+    var rootRef = firebase.database().ref();
+    var urlRef = rootRef.child('Manage_Class/' + keyClass + '/StudentJoin');
+    urlRef.once('value', childSnapshot => {
       if (childSnapshot.exists()) {
-        const listStudent = [];
+        const listStudent_Joined = [];
+        const list_MSSV_Joined = [];
         childSnapshot.forEach(doc => {
           var stt = 0;
           if (typeof doc.toJSON().email != 'undefined') {
             stt = 1;
           }
           if (stt == 1) {
-            listStudent.push({
+            list_MSSV_Joined.push(doc.toJSON().MSSV);
+            listStudent_Joined.push({
               email: doc.toJSON().email,
               MSSV: doc.toJSON().MSSV,
               id: doc.toJSON().id,
+              address: doc.toJSON().address,
+              dateBirthday:doc.toJSON().dateBirthday,
+              fullName:doc.toJSON().fullName,
+              numberPhone:doc.toJSON().numberPhone,
+              sex:doc.toJSON().sex,
+              avt:doc.toJSON().proofs[0]["url"],
             });
           }
         });
         this.setState({
-          listStudent: listStudent
+          listStudent_Joined: listStudent_Joined.sort((a, b) => {
+            return a.className < b.className;
+          }),
+          list_MSSV_Joined:list_MSSV_Joined,
         });
       }
     });
   }
-  render() {
-    const tableData = [];
-    for (let i = 0; i < 20; i += 1) {
-      const rowData = [];
-      for (let j = 0; j < 5; j += 1) {
-        rowData.push(`${i}${j}`);
-      }
-      tableData.push(rowData);
-    }
+  getListStudent_Attendanced() {
     const ngaydiemdanh = this.props.navigation.state.params.ngaydiemdanh;
-    const infoClass = this.props.navigation.state.params.infoClass;
+    const keyClass = this.props.navigation.state.params.keyClass;
+    var rootRef = firebase.database().ref();
+    var urlRef = rootRef.child('Manage_Class/' + keyClass + '/StudentJoin');
+    urlRef.once('value', childSnapshot => {
+      if (childSnapshot.exists()) {
+        const listHistoryChild_Attendanced = [];
+        firebase.database().ref('Manage_Class/'+keyClass+'/Attendance/'+ngaydiemdanh).orderByChild('MSSV').on('value',(value)=>{
+          if(value.exists()){
+            value.forEach(element =>{
+              if( typeof element.val().MSSV != 'undefined'){
+                listHistoryChild_Attendanced.push(element.val().MSSV)
+              }
+            })
+            this.setState({listHistoryChild_Attendanced:listHistoryChild_Attendanced})
+          }
+      })
+      }
+    });
+  }
+  render() {
+    const ngaydiemdanh = this.props.navigation.state.params.ngaydiemdanh;
+    const { listStudent_Joined,listHistoryChild_Attendanced } = this.state;
+    let vang = listStudent_Joined.length - listHistoryChild_Attendanced.length;
     return (
       <View style={styles.container}>
         <Tittle {...this.props} />
-        {/* <View style={styles.viewCreateClass}>
-          <TextInput
-            style={styles.viewTextInput}
-            keyboardType="default"
-            placeholderTextColor="gray"
-            fontStyle="italic"
-            placeholder="Hãy nhập gì đó "
-            autoCapitalize="none"
-            onChangeText={text => {
-              this.setState({ txtSearch: text });
-            }}
-            value={this.state.txtSearch}
-            onSelectionChange={() => this.onSearchNew()}
-          />
-        </View> */}
         <View style={{ marginTop: 7 }}>
-
-          <View style={[styles.header, { flexDirection: 'column', justifyContent: 'space-between', height: HEIGHT / 12 }]}>
-            <View style={{ justifyContent: 'space-between', flexDirection: 'row', }}>
-              <View style={{ width: '62%', borderWidth: 0, height: HEIGHT / 25, paddingLeft: 10 }}>
-                <Text>
-                  Lớp  : {infoClass.class}
-                </Text>
-              </View>
+          <View style={[styles.header, { flexDirection: 'column', justifyContent: 'space-between', height: HEIGHT / 22 }]}>
+            <View style={{ justifyContent: 'space-between', flexDirection: 'row',height: HEIGHT / 25,borderWidth: 0,}}>
               <View style={{ width: '38%', borderWidth: 0, height: HEIGHT / 25, paddingLeft: 0, }}>
                 <Text>
                   Ngày : {ngaydiemdanh}
                 </Text>
               </View>
             </View>
-            <View style={{ justifyContent: 'space-between', flexDirection: 'row', }}>
-              <View style={{ width: '62%', borderWidth: 0, height: HEIGHT / 25, paddingLeft: 10 }}>
-                <Text>
-                  Môn : {infoClass.subject}
-                </Text>
-              </View>
-              <View style={{ width: '38%', borderWidth: 0, height: HEIGHT / 25, paddingLeft: 0, }}>
-                <Text>
-                  Sĩ Số : {infoClass.count}
-                </Text>
-              </View>
-            </View>
           </View>
-          <View style={styles.header}>
-            <View style={[styles.styleColumn, { flex: 1, }]}>
+          <View style={[styles.header,{opacity:.8}]}>
+            <View style={[styles.styleColumn, { flex: 1, borderLeftWidth: 0.5, borderLeftColor: 'gray', }]}>
               <Text >STT</Text>
             </View>
-            <View style={[styles.styleColumn, { flex: 3, }]}>
+            <View style={[styles.styleColumn, { flex: 3,borderLeftWidth: 0.5, borderLeftColor: '#666',  }]}>
               <Text style={{ fontSize: 12, fontWeight: '700', opacity: .7, }}>
                 MSSV
                 </Text>
             </View>
-            <View style={[styles.styleColumn, { flex: 5 }]}>
+            <View style={[styles.styleColumn, { flex: 5 ,borderLeftWidth: 0.5, borderLeftColor: '#666', }]}>
               <Text style={{ fontSize: 14, fontWeight: '700', opacity: .7, }}>
                 Họ Và Tên
                 </Text>
             </View>
-            <View style={[styles.styleColumn, { flex: 1 }]}>
+            <View style={[styles.styleColumn, { flex: 1,borderLeftWidth: 0.5, borderLeftColor: '#666',  }]}>
               <Text style={{ fontSize: 12, fontWeight: '700', opacity: .7, }}>
                 AT
                 </Text>
@@ -222,7 +264,7 @@ export default class ListStudentAttendance extends Component {
         </View>
 
         <FlatList
-          data={this.state.listStudent}
+          data={this.state.listStudent_Joined}
           style={{ marginVertical: 0, }}
           renderItem={({ item, index }) => {
             return (
@@ -238,11 +280,8 @@ export default class ListStudentAttendance extends Component {
         />
         <View style={styles.viewResult}>
           <View style={styles.viewResultChild}>
-            <Text style={styles.textResult}>Sĩ Số : {infoClass.count}</Text>
-            <Text style={styles.textResult}>Đã Điểm Danh: {this.state.listStudent.length}</Text>
-          </View>
-          <View style={styles.viewResultChild}>
-            <Text style={[styles.textResult],{width:WIDTH*0.9}}>Vắng/Không Điểm Danh :{Global.siso - this.state.listStudent.length}</Text>
+            <Text style={styles.textResult}>Sĩ số : {listStudent_Joined.length} </Text>
+            <Text style={styles.textResult}>Vắng : {vang}</Text>
           </View>
         </View>
       </View>
@@ -258,9 +297,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   viewTextInput: {
-    // borderWidth:1,
     height: 40,
-    width: WIDTH*0.9 ,
+    width: WIDTH * 0.25,
     margin: 10,
     padding: 10,
     borderColor: 'green',
@@ -271,16 +309,16 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    height: 64,
+    height: 34,
     paddingHorizontal: 20,
     borderBottomColor: '#f1f1f1',
     borderBottomWidth: 0,
-    backgroundColor: 'rgba(140, 200, 214,0.8)',
+    backgroundColor: 'rgba(140, 200, 214,0.6)',
   },
   viewResult: {
     zIndex: 10,
     backgroundColor: '#4bacb8',
-    height: HEIGHT / 9,
+    height: HEIGHT / 14,
     width: WIDTH,
     paddingLeft: 20,
     justifyContent: 'center',
@@ -288,17 +326,17 @@ const styles = StyleSheet.create({
   textResult: {
     marginVertical: 5,
     fontSize: 15,
-    width: WIDTH * 0.5,
+    width: WIDTH * 0.4,
   },
   viewResultChild: {
     flexDirection: 'row',
-    marginHorizontal: WIDTH / 14,
+    justifyContent:'center',
+    alignItems:'center'
   },
   header: {
     height: HEIGHT / 15,
     backgroundColor: '#537791',
     width: WIDTH * 0.97,
-    borderLeftWidth: 0.5, borderLeftColor: 'gray',
     borderTopColor: 'gray',
     borderTopWidth: 0.5,
     alignItems: 'center',
