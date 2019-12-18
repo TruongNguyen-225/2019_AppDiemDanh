@@ -43,6 +43,7 @@ export default class CreateClass extends Component {
       siso: 0,
       count: 0,
       fullStudent:false,
+      showFooter: false,
     };
     const idType = this.props.navigation.state.params.thamso;
     Global.tittle = idType.className;
@@ -74,14 +75,17 @@ export default class CreateClass extends Component {
           return a.className < b.className;
         }),
       });
+      if( this.state.listStudent.length == Global.siso)
+      {
+        this.setState({
+         fullStudent: true,
+         showFooter:true,
+        })
+      }
     }
   });
-   if( this.state.listStudent.length == Global.siso)
-   {
-     this.setState({
-      fullStudent: true,
-     })
-   }
+ 
+   
   }
   getDataFromDB () {
     system.on ('value', childSnapshot => {
@@ -146,11 +150,11 @@ try{
     firebase.database().ref().child('Manage_Class').child (data.key)
       .update ({
         status:true,
-        isChecked:'Đã Chốt Lớp , Lớp Có Thể Điểm Danh'
+        isChecked:'1'
       })
       .catch (() => Alert ('Có lỗi xảy ra !'));
   });
-Alert.alert ('Thông báo', 'Cập nhật thông tin thành công !');
+Alert.alert ('Thông báo', 'Chốt lớp thành công!');
 this.props.navigation.navigate ('Loading');
 }catch(e)
 {
@@ -159,8 +163,8 @@ this.props.navigation.navigate ('Loading');
   }
   render () {
     const viewFullStudent = (
-      <View>
-        <Text style={{alignItems:'center',justifyContent:'center'}}>Lớp Đã Đủ HS Tham Gia , Vui Lòng Chốt Lớp !</Text>
+      <View style={{justifyContent:'center',alignItems:'center',backgroundColor: '#0093c4',}}>
+        <Text style={{alignItems:'center',justifyContent:'center',marginTop:20,}}>Lớp Đã Đủ HS Tham Gia , Vui Lòng Chốt Lớp !</Text>
         <View
           style={{
             alignItems: 'center',
@@ -179,7 +183,39 @@ this.props.navigation.navigate ('Loading');
         </View>
       </View>
     )
-    const showBtnCloseClass = this.state.fullStudent ? viewFullStudent : null
+    const viewFooter = (
+      
+        <View>
+          <Animatable.View
+          animation="rubberBand"
+          iterationCount={10000}
+          direction="alternate"
+          style={styles.btnRubberBand}
+        >
+          <TouchableOpacity
+            onPress={this._onPressAdd}
+            style={{width: '100%', height: '100%', justifyContent: 'center'}}
+          >
+            <Text style={{textAlign: 'center'}}>Lấy QRCode</Text>
+          </TouchableOpacity>
+        </Animatable.View>
+        <View style={styles.viewResult}>
+          <View style={[styles.viewResultChild,{marginLeft:0}]}>
+            <Text style={styles.textResult}>Sĩ Số :{Global.siso}</Text>
+            <Text style={styles.textResult}>
+              Đã tham gia: {this.state.listStudent.length}
+            </Text>
+          </View>
+          <View style={styles.viewResultChild}>
+            <Text style={styles.textResult}>
+              Chưa tham gia : {Global.siso -this.state.listStudent.length}
+            </Text>
+          </View>
+        </View>
+      </View>
+    )
+    const showBtnCloseClass = this.state.fullStudent ? viewFullStudent : null;
+    const showFooter = this.state.fullStudent ? null : viewFooter ;
     const {listStudent} = this.state;
 
     return (
@@ -227,9 +263,13 @@ this.props.navigation.navigate ('Loading');
               }}
               keyExtractor={(item, id) => item.id}
             />
-            {showBtnCloseClass}
           </View>
         </ScrollView>
+        {showBtnCloseClass}
+      {this.state.showFooter ? null :
+      <View style={{flex:1,justifyContent:'flex-end'}}>
+        <View style={styles.viewResult}>
+        <View style={[styles.viewResultChild,{marginHorizontal:0,borderWidth:0,}]}>
         <Animatable.View
           animation="rubberBand"
           iterationCount={10000}
@@ -238,24 +278,20 @@ this.props.navigation.navigate ('Loading');
         >
           <TouchableOpacity
             onPress={this._onPressAdd}
-            style={{width: '100%', height: '100%', justifyContent: 'center'}}
+            style={{width: '100%',height:'100%', justifyContent: 'center'}}
           >
             <Text style={{textAlign: 'center'}}>Lấy QRCode</Text>
           </TouchableOpacity>
         </Animatable.View>
-        <View style={styles.viewResult}>
+          </View>
           <View style={styles.viewResultChild}>
             <Text style={styles.textResult}>Sĩ Số :{Global.siso}</Text>
             <Text style={styles.textResult}>
               Đã tham gia: {listStudent.length}
             </Text>
           </View>
-          <View style={styles.viewResultChild}>
-            <Text style={styles.textResult}>
-              Chưa tham gia : {Global.siso -listStudent.length}
-            </Text>
-          </View>
         </View>
+        </View>}
         <AddModal ref={'addModal'} parentFlatList={this} {...this.props} />
       </View>
     );
@@ -302,11 +338,12 @@ const styles = StyleSheet.create ({
     zIndex: 10,
     backgroundColor: '#4bacb8',
     height: HEIGHT / 9,
-    paddingLeft: 20,
     justifyContent: 'center',
+    alignItems:'center'
   },
-  textResult: {marginVertical: 5, fontSize: 15, width: WIDTH * 0.4},
-  viewResultChild: {flexDirection: 'row', marginHorizontal: WIDTH / 14},
+  textResult: {marginVertical: 5, fontSize: 15, width: WIDTH * 0.4,textAlign:'center'},
+  viewResultChild: {flexDirection: 'row', marginHorizontal: WIDTH / 14,justifyContent: 'center',
+  alignItems:'center'},
   viewQrcode: {
     marginTop: WIDTH / 2 - 125,
     marginLeft: WIDTH / 2 - 125,
@@ -319,9 +356,10 @@ const styles = StyleSheet.create ({
     opacity: 0.9,
     color: '#fff',
     width: '100%',
-    height: '7%',
+    height: 35,
     alignItems: 'center',
     justifyContent: 'center',
+    top:-3,
   },
   bigButton: {
     width: WIDTH * 0.9,
@@ -331,11 +369,11 @@ const styles = StyleSheet.create ({
     borderColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#0093c4',
+    backgroundColor: '#ddd',
   },
   buttonText: {
     fontFamily: 'Avenir',
-    color: '#fff',
+    color: '#000',
     fontWeight: '400',
   },
 });

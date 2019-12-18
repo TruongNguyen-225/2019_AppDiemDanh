@@ -30,6 +30,7 @@ import ListCLass_DateTime from '../screens/Class/ListCLass_DateTime';
 import ShowAllStudentWithResultSearch from '../screens/Class/ShowAllStudentWithResultSearch';
 import Student_Profile from '../screens/Class/Student_Profile';
 import My_Profile from '../screens/Update/My_Profile';
+import Chart from '../screens/Class/Chart';
 // SEARCH
 import SearchScreen from '../screens/Search/SearchScreen';
 
@@ -69,7 +70,8 @@ export const RootStack = createStackNavigator (
     ListCLass_DateTime,
     ShowAllStudentWithResultSearch,
     Student_Profile,
-    My_Profile
+    My_Profile,
+    Chart,
   },
   {
     initialRouteName: 'HomeScreen',

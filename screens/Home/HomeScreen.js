@@ -23,7 +23,10 @@ import icons_checked from '../../assets/icons/icons8-check-file-96.png';
 
 const {width: WIDTH} = Dimensions.get('window');
 const {height: HEIGHT} = Dimensions.get('window');
-var system = firebase.database().ref().child('Manage_Class');
+var system = firebase
+  .database()
+  .ref()
+  .child('Manage_Class');
 export default class HomeScreen extends Component {
   static navigationOptions = {
     header: null,
@@ -69,7 +72,7 @@ export default class HomeScreen extends Component {
     await AsyncStorage.getItem('userData').then(value => {
       const userData = JSON.parse(value);
       this.setState({userData: userData});
-      console.log('aaaa',this.state.userData)
+      console.log('aaaa', this.state.userData);
     });
   };
   onGoToSearch() {
@@ -91,10 +94,16 @@ export default class HomeScreen extends Component {
             <ScrollView>
               <View style={styles.child_row}>
                 <View style={styles.children}>
-                  <TouchableOpacity style={styles.styleTouch}
-                      onPress={()=>this.props.navigation.navigate('CreateClass')}>
+                  <TouchableOpacity
+                    style={styles.styleTouch}
+                    onPress={() =>
+                      this.props.navigation.navigate('CreateClass')
+                    }>
                     <View style={styles.styleImg}>
-                      <Image source={icons_add} style={{width: '80%', height: '80%'}} />
+                      <Image
+                        source={icons_add}
+                        style={{width: '80%', height: '80%'}}
+                      />
                     </View>
                     <Text style={{fontSize: 15, flexWrap: 'wrap'}}>
                       Tạo Lớp Mới
@@ -102,10 +111,14 @@ export default class HomeScreen extends Component {
                   </TouchableOpacity>
                 </View>
                 <View style={styles.children}>
-                  <TouchableOpacity style={styles.styleTouch}
-                      onPress={()=>this.props.navigation.navigate('InitClass')}>
+                  <TouchableOpacity
+                    style={styles.styleTouch}
+                    onPress={() => this.props.navigation.navigate('InitClass')}>
                     <View style={styles.styleImg}>
-                      <Image source={icons_load} style={{width: '80%', height: '80%'}} />
+                      <Image
+                        source={icons_load}
+                        style={{width: '80%', height: '80%'}}
+                      />
                     </View>
                     <Text style={{fontSize: 15, flexWrap: 'wrap'}}>
                       Lớp Đang Xử Lý
@@ -115,10 +128,14 @@ export default class HomeScreen extends Component {
               </View>
               <View style={styles.child_row}>
                 <View style={styles.children}>
-                  <TouchableOpacity style={styles.styleTouch}
-                      onPress={()=>this.props.navigation.navigate('ClassDone')}>
+                  <TouchableOpacity
+                    style={styles.styleTouch}
+                    onPress={() => this.props.navigation.navigate('ClassDone')}>
                     <View style={styles.styleImg}>
-                      <Image source={icons_checked} style={{width: '80%', height: '80%'}} />
+                      <Image
+                        source={icons_checked}
+                        style={{width: '80%', height: '80%'}}
+                      />
                     </View>
                     <Text style={{fontSize: 15, flexWrap: 'wrap'}}>
                       Lớp Đã Chốt
@@ -126,10 +143,14 @@ export default class HomeScreen extends Component {
                   </TouchableOpacity>
                 </View>
                 <View style={styles.children}>
-                  <TouchableOpacity style={styles.styleTouch}
-                      onPress={()=>this.props.navigation.navigate('')}>
+                  <TouchableOpacity
+                    style={styles.styleTouch}
+                    onPress={() => this.props.navigation.navigate('Chart')}>
                     <View style={styles.styleImg}>
-                      <Image source={icons_add} style={{width: '80%', height: '80%'}} />
+                      <Image
+                        source={icons_add}
+                        style={{width: '80%', height: '80%'}}
+                      />
                     </View>
                     <Text style={{fontSize: 15, flexWrap: 'wrap'}}>
                       Biểu Đồ Thống Kê
@@ -139,32 +160,40 @@ export default class HomeScreen extends Component {
               </View>
               <View style={styles.child_row}>
                 <View style={styles.children}>
-                  <TouchableOpacity style={styles.styleTouch}
-                      onPress={()=>this.props.navigation.navigate('')}>
+                  <TouchableOpacity
+                    style={styles.styleTouch}
+                    onPress={() => this.props.navigation.navigate('')}>
                     <View style={styles.styleImg}>
-                      <Image source={icons_add} style={{width: '80%', height: '80%'}} />
+                      <Image
+                        source={icons_add}
+                        style={{width: '80%', height: '80%'}}
+                      />
                     </View>
                     <Text style={{fontSize: 15, flexWrap: 'wrap'}}>
-                     Đang Phát Triển
+                      Đang Phát Triển
                     </Text>
                   </TouchableOpacity>
                 </View>
                 <View style={styles.children}>
-                  <TouchableOpacity style={styles.styleTouch}
-                      onPress={()=>this.props.navigation.navigate('')}>
+                  <TouchableOpacity
+                    style={styles.styleTouch}
+                    onPress={() => this.props.navigation.navigate('')}>
                     <View style={styles.styleImg}>
-                      <Image source={icons_add} style={{width: '80%', height: '80%'}} />
+                      <Image
+                        source={icons_add}
+                        style={{width: '80%', height: '80%'}}
+                      />
                     </View>
                     <Text style={{fontSize: 15, flexWrap: 'wrap'}}>
-                    Đang Phát Triển
+                      Đang Phát Triển
                     </Text>
                   </TouchableOpacity>
                 </View>
               </View>
             </ScrollView>
+          </View>
         </View>
       </View>
-    </View>
     );
   }
 }
@@ -182,9 +211,9 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFF',
     alignItems: 'center',
     marginVertical: 8,
-    marginBottom:0,
-    borderBottomLeftRadius:0,
-    borderBottomRightRadius:0,
+    marginBottom: 0,
+    borderBottomLeftRadius: 0,
+    borderBottomRightRadius: 0,
     borderRadius: 10,
   },
   child_row: {
@@ -193,7 +222,6 @@ const styles = StyleSheet.create({
     height: 155,
     marginTop: HEIGHT * 0.03,
     justifyContent: 'center',
-
   },
   children: {
     borderWidth: 1,
@@ -206,17 +234,17 @@ const styles = StyleSheet.create({
     marginHorizontal: 10,
     backgroundColor: 'rgba(166,216,207, 0.5)',
   },
- styleTouch:{
-  width: 170,
-  height: 170,
-  alignItems: 'center',
-  justifyContent: 'center',
- },
- styleImg:{
-  height: 80,
-  width: 80,
-  borderRadius: 10,
-  alignItems: 'center',
-  justifyContent: 'center',
-},
+  styleTouch: {
+    width: 170,
+    height: 170,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  styleImg: {
+    height: 80,
+    width: 80,
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
 });

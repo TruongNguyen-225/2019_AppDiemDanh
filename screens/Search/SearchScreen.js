@@ -12,24 +12,14 @@ import {
 import firebase from 'react-native-firebase';
 import Global from '../../constants/global/Global';
 import OfflineNotice from '../Header/OfflineNotice';
-
 import logoBack from '../../assets/icons/back.png';
-import loser from '../../assets/icons/nothing.png';
 import gif from '../../assets/icons/search.gif';
 import school from '../../assets/icons/icons8-abc-96.png';
-import goto from '../../assets/icons/icons8-more-than-50.png'
 import left from '../../assets/icons/left.png';
 
-
 var system = firebase.database().ref().child('Manage_Class');
-
 const { width: WIDTH } = Dimensions.get('window');
 const { height: HEIGHT } = Dimensions.get('window');
-
-// var pathClass = null;
-// var count = 0;
-// var ListClass = [];
-
 class FlatListItem extends Component {
   constructor(props) {
     super(props);
@@ -45,7 +35,6 @@ class FlatListItem extends Component {
   getListStudent() {
     var rootRef = firebase.database().ref();
     var urlRef = rootRef.child('Manage_Class/' + this.props.item.key +'/StudentJoin');
-    // console.log ('path-urlRef', urlRef.path);
     urlRef.once('value', childSnapshot => {
       if (childSnapshot.exists()) {
         const listStudent = [];
@@ -71,9 +60,6 @@ class FlatListItem extends Component {
       }
     });
   }
-  showInfoClass() {
-    alert("chưa làm kịp :v")
-  }
   render() {
     return (
         <View style={ style.viewOneClass}>
@@ -94,7 +80,7 @@ class FlatListItem extends Component {
                   {this.props.item.className}
                 </Text>
                 <Text style={{fontSize: 12, fontWeight: '700', fontStyle: 'italic',color: '#448aff', }}>
-                  {this.props.item.isChecked}
+                  {this.props.item.isChecked === 0 ? <Text>Đang Xử Lý</Text> : this.props.item.isChecked === 1 ? <Text>Lớp Đã Chốt , Có Thể Điểm Danh</Text> :<Text></Text>}
                 </Text>
                 <Text style={{ fontSize: 12, color: '#455a64', fontStyle: 'italic' }}>{this.props.item.time}</Text>
               </View>
@@ -160,7 +146,6 @@ export default class SearchScreen extends Component {
     this.setState({ resultFail: false });
     //lấy all danh sách lớp 
     await system
-      // .orderByChild('status').equalTo(this.state.status)
       .on('value', childSnapshot => {
         const classRoom = [];
         childSnapshot.forEach(doc => {
@@ -185,12 +170,10 @@ export default class SearchScreen extends Component {
             loading: true,
           });
         });
-        console.log('classRoom ', this.state.class);
       });
   }
   async onSearch() {
     await this.setState({ resultFail: false });
-    const { listClassNew } = this.state;
     var key = this.state.txtSearch.toUpperCase();
     var arr_temp = this.state.class;
     var arr_search = [];
@@ -214,12 +197,6 @@ export default class SearchScreen extends Component {
               condition3:false,
             })
           }
-          // else if ( arr_temp[i].className.toString().toUpperCase().includes(key) === false)
-          // {
-          //   this.setState({
-          //     isSearch:false
-          //   })
-          // }
         }
     }
     if (kt == 0)

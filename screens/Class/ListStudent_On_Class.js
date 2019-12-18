@@ -1,14 +1,8 @@
 import React, { Component } from 'react';
-import { StyleSheet, View, ScrollView, Text, Dimensions, TouchableOpacity, Image, FlatList, TextInput, } from 'react-native';
-import { Table, TableWrapper, Row } from 'react-native-table-component';
-
-
+import { StyleSheet, View, Text, Dimensions, TouchableOpacity, FlatList, } from 'react-native';
 import Global from '../../constants/global/Global';
 import Tittle from '../Header/Tittle';
 import firebase from 'react-native-firebase';
-import search from '../../assets/icons/icons8-search-96.png';
-import filter from '../../assets/icons/icons8-filter-96.png';
-import school from '../../assets/icons/icons8-abc-96.png';
 
 const { width: WIDTH } = Dimensions.get('window');
 const { height: HEIGHT } = Dimensions.get('window');

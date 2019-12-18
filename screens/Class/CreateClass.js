@@ -15,7 +15,7 @@ import firebase from 'react-native-firebase';
 import AsyncStorage from '@react-native-community/async-storage';
 import DatePicker from 'react-native-datepicker';
 import Global from '../../constants/global/Global';
-import OfflineNotice from '../Header/OfflineNotice';
+import {setItemToAsyncStorage} from '../HandleAuthentication/function';
 import Swipeout from 'react-native-swipeout';
 import icons_add from '../../assets/icons/icon_plus_big.png';
 import school from '../../assets/icons/icons8-abc-96.png';
@@ -68,10 +68,12 @@ class FlatListItem extends Component {
                 {
                   text: 'Yes',
                   onPress: () => {
+                    console.log('id',this.props.item._id);
                     system
                       .orderByChild('_id')
                       .equalTo(this.props.item._id)
                       .on('child_added', data => {
+                        console.log('data',data.key)
                         data.key;
                         system.child(data.key).remove();
                       });
@@ -205,24 +207,20 @@ export default class CreateClass extends Component {
       currentUser:null,
       userData_temp:[],
     };
-    // const { currentUser } = firebase.auth();
-    // this.setState({ currentUser });
     this._onPressAdd = this._onPressAdd.bind(this);
     Global.arrayClass = this.state.class;
     Global.tittle =this.state.tittle
-    // this.getUserData();
   }
-
    componentDidMount() {
     Global.router = this.state.router;
     this.getListClass();
     this.getUserData();
-
   }
   getUserData = async () => {
     await AsyncStorage.getItem('userData').then(value => {
       const userData = JSON.parse(value);
       this.setState({ userData: userData });
+      console.log('in ra',this.state.userData)
     });
   };
   onPressAdd = () => {
@@ -314,7 +312,7 @@ export default class CreateClass extends Component {
    const classRoom = [];
    var current = currentUser && currentUser.email;
    if(childSnapshot.exists()){
-   system.orderByChild('gmail_teacher').equalTo(current).on('value',value =>{
+   system.orderByChild('gmail_teacher').equalTo(this.state.userData.email).on('value',value =>{
      if(value.exists()){
        value.forEach(doc => {
          classRoom.push({

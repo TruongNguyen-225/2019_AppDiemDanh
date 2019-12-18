@@ -13,7 +13,7 @@ import firebase from 'react-native-firebase';
 import AsyncStorage from '@react-native-community/async-storage';
 import {setItemToAsyncStorage} from './function';
 
-const RootRef = firebase.database ().ref ().child ('members');
+const RootRef = firebase.database ().ref ().child ('Account_Teacher');
 
 const {width: WIDTH} = Dimensions.get ('window');
 const {height: HEIGHT} = Dimensions.get ('window');
@@ -49,7 +49,7 @@ export default class Login extends React.Component {
             userData = {
               email: doc.toJSON ().email,
               id: doc.toJSON ().id,
-              MSSV: doc.toJSON ().MSSV,
+              MSGV: doc.toJSON ().MSGV,
               fullName: doc.toJSON ().fullName,
               address: doc.toJSON ().numberPhone,
               proofs: doc.toJSON ().proofs,

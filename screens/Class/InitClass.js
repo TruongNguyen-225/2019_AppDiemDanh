@@ -164,6 +164,7 @@ export default class CreateClass extends Component {
       listClassNew:[],
       router: 'HomeScreen',
       tittle: 'DANH SÁCH LỚP ĐANG XỬ LÝ',
+      isChecked:0,
     };
     Global.arrayClass = this.state.class;
     Global.tittle = this.state.tittle;
@@ -175,10 +176,12 @@ export default class CreateClass extends Component {
     const { currentUser } = firebase.auth();
     this.setState({ currentUser });
   // lấy xuống các lớp học đang trong quá trình xử lý
+  // await co
   await system.orderByChild('status').equalTo(this.state.status)
   .on('value', childSnapshot => {
     const classRoom = [];
     if(childSnapshot.exists()){
+      console.log('in ra child',childSnapshot)
     system.orderByChild('gmail_teacher').equalTo(currentUser&& currentUser.email).on('value',value =>{
       if(value.exists()){
         value.forEach(doc => {
