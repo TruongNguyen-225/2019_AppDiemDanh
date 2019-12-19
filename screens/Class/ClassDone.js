@@ -19,7 +19,7 @@ import Tittle from '../Header/Tittle';
 
 const {width: WIDTH} = Dimensions.get ('window');
 const {height: HEIGHT} = Dimensions.get ('window');
-var system = firebase.database ().ref ().child ('Manage_Class');
+var system = firebase.database ().ref('Manage_Class');
 class FlatListItem extends Component {
   constructor (props) {
     super (props);
@@ -44,9 +44,7 @@ class FlatListItem extends Component {
       <View style={ style.viewOneClass}>
         <TouchableOpacity
           style={style.viewFlatList}
-          onPress={()=> this.props.navigation.navigate('Screen_Handle',{keyClass: this.state.getKey,thamso: this.props.item,})}
-
-        >
+          onPress={()=> this.props.navigation.navigate('Screen_Handle',{keyClass: this.state.getKey,thamso: this.props.item,})}>
           <View style={{flexDirection: 'row',alignItems: 'center',justifyContent: 'space-between',flex: 1, }}>
             <View style={{ width: 50, height: 50, borderWidth: 0, borderRadius: 999, alignItems: 'center', justifyContent: 'center', }}>
               <Image source={school} style={{ width: 50, height: 50 }} />
@@ -56,9 +54,9 @@ class FlatListItem extends Component {
                 {this.props.item.className}
               </Text>
               <Text style={{fontSize: 12, fontWeight: '700', fontStyle: 'italic',color: '#448aff', }}>
-                {this.props.item.isChecked}
+              {this.props.item.isChecked === 1 ? <Text>Lớp Đã Chốt , Có Thể Điểm Danh</Text> :<Text></Text>}
               </Text>
-              <Text style={{ fontSize: 12, color: '#455a64', fontStyle: 'italic' }}>{this.props.item.time}</Text>
+              <Text style={{fontSize:12, color:'#455a64', fontStyle:'italic'}}> {this.props.item.dateStart} : {this.props.item.dateFinish}</Text>
             </View>
           </View>
         </TouchableOpacity>
@@ -114,6 +112,7 @@ export default class CreateClass extends Component {
       member: null,
       activeRowKey: null,
       closeClass: true,
+      isChecked:"1",
       router: 'HomeScreen',
       tittle: 'DANH SÁCH LỚP ĐÃ CHỐT',
     };
@@ -127,11 +126,12 @@ export default class CreateClass extends Component {
     const {currentUser} = firebase.auth ();
     this.setState ({currentUser});
    // lấy xuống các lớp học đã chốt
-   await system.orderByChild('status').equalTo(this.state.closeClass)
+   await system.orderByChild('MSGV').equalTo(this.state.userData.MSGV )
    .on('value', childSnapshot => {
      const classRoom = [];
      if(childSnapshot.exists()){
-     system.orderByChild('gmail_teacher').equalTo(currentUser&& currentUser.email).on('value',value =>{
+    //  system.orderByChild('gmail_teacher').equalTo(currentUser&& currentUser.email).on('value',value =>{
+      system.orderByChild('status').equalTo(this.state.closeClass).on('value',value =>{
        if(value.exists()){
          value.forEach(doc => {
            classRoom.push({

@@ -30,7 +30,7 @@ const {height: HEIGHT} = Dimensions.get ('window');
 const Header_Maximum_Height = 270;
 const Header_Minimum_Height = 50;
 
-const RootRef = firebase.database ().ref ().child ('member');
+const RootRef = firebase.database ().ref ().child ('Account_Teacher');
 
 export default class Main extends Component {
   static navigationOptions = {

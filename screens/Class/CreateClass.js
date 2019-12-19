@@ -24,7 +24,7 @@ import Tittle from '../Header/Tittle';
 
 const { width: WIDTH } = Dimensions.get('window');
 const { height: HEIGHT } = Dimensions.get('window');
-var system = firebase.database().ref().child('Manage_Class');
+var system = firebase.database().ref('Manage_Class');
 class FlatListItem extends Component {
   constructor(props) {
     super(props);
@@ -206,21 +206,23 @@ export default class CreateClass extends Component {
       numberSession:0,
       currentUser:null,
       userData_temp:[],
+      closeClass:false,
     };
+    // this.getUserData();
     this._onPressAdd = this._onPressAdd.bind(this);
     Global.arrayClass = this.state.class;
     Global.tittle =this.state.tittle
   }
-   componentDidMount() {
+   componentDidMount = async()=> {
     Global.router = this.state.router;
-    this.getListClass();
-    this.getUserData();
+    await this.getUserData();
+    await this.getListClass();
   }
   getUserData = async () => {
     await AsyncStorage.getItem('userData').then(value => {
       const userData = JSON.parse(value);
       this.setState({ userData: userData });
-      console.log('in ra',this.state.userData)
+      console.log('in ra',this.state.userData.MSGV)
     });
   };
   onPressAdd = () => {
@@ -304,15 +306,16 @@ export default class CreateClass extends Component {
     }
   };
   getListClass(){
-    const { currentUser } = firebase.auth();
-    console.log('curentUser1',currentUser)
+    // const { currentUser } = firebase.auth();
+    console.log('MSGV1',this.state.userData.MSGV);
  // lấy xuống các lớp học đang trong quá trình xử lý
- system.orderByChild('status').equalTo(this.state.status)
+//  system.orderByChild('MSGV').equalTo(this.state.userData.MSGV)
+system.orderByChild('status').equalTo(this.state.closeClass)
  .on('value', childSnapshot => {
    const classRoom = [];
-   var current = currentUser && currentUser.email;
+  //  var current = currentUser && currentUser.email;
    if(childSnapshot.exists()){
-   system.orderByChild('gmail_teacher').equalTo(this.state.userData.email).on('value',value =>{
+   system.orderByChild('MSGV').equalTo(this.state.userData.MSGV).on('value',value =>{
      if(value.exists()){
        value.forEach(doc => {
          classRoom.push({

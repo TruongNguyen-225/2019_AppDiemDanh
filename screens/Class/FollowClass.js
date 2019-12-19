@@ -150,7 +150,7 @@ try{
     firebase.database().ref().child('Manage_Class').child (data.key)
       .update ({
         status:true,
-        isChecked:'1'
+        isChecked:1,
       })
       .catch (() => Alert ('Có lỗi xảy ra !'));
   });
