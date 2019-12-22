@@ -3,7 +3,14 @@ import { StyleSheet, SafeAreaView, Button ,View} from "react-native";
 import { ECharts } from "react-native-echarts-wrapper";
 import Tittle from '../Header/Tittle';
 import Global from '../../constants/global/Global';
+import AsyncStorage from '@react-native-community/async-storage';
+import firebase from 'react-native-firebase';
 
+var system = firebase.database ().ref('Manage_Class');
+const classRoom = [];
+const temp =[];
+const arr_className = [];
+var tenLopVietTat ;
 export default class App extends Component {
 static navigationOptions = {
       header: null,
@@ -13,21 +20,69 @@ constructor(props) {
       this.state = {
         tittle: 'BIỂU ĐỒ THỐNG KÊ',
         router: 'HomeScreen',
+        arr_className:[],
+        false: false,
       };
       Global.router = this.state.router;
       Global.tittle = this.state.tittle;
     }
+    async componentDidMount () {
+      Global.router = this.state.router;
+      await this.getUserData ();
+      await system.orderByChild('MSGV').equalTo(this.state.userData.MSGV )
+     .on('value', childSnapshot => {
+      if(childSnapshot.exists()){
+        childSnapshot.forEach(x=>{
+          temp.push({key: x.key,
+            className: x.toJSON().className,
+            class: x.toJSON().class,
+            subject: x.toJSON().subject,
+            dateFinish:x.toJSON().dateFinish,
+            dateStart:x.toJSON().dateStart,
+            numberTarget:x.toJSON().numberTarget,
+            numberSession:x.toJSON().numberSession,
+            status:x.toJSON().status,
+          
+          });
+        })
+        for( let i = 0 ; i < temp.length ; i++)
+        {
+          // TÌM NHỮNG LỚP CÓ STATUS = TRUE = ĐÃ CHỐT 
+          if(temp[i].status === true ){
+            // HÀM RÚT GỌN CHUỖI LẤY KÍ TỰ ĐÀU TIÊN MỖI TỪ
+            let acronym = temp[i].subject.toString().toUpperCase().split(/\s/).reduce((response,Word)=> response+=Word.slice(0,1),'')
+            tenLopVietTat = temp[i].class.toString().toUpperCase() +'-'+ acronym;
+            classRoom.push(
+              temp[i]
+            );
+            arr_className.push(
+              tenLopVietTat
+            )
+          }
+        }
+      }
+     });
+    }
+    getUserData = async () => {
+      await AsyncStorage.getItem ('userData').then (value => {
+        const userData = JSON.parse (value);
+        this.setState ({userData: userData});
+        console.log('USER',this.state.userData)
+      });
+    };
+    
   option = {
+    
     xAxis: {
       type: "category",
-      data: ["LTNC", "DSS", "LTCB", "Thu", "Fri", "Sat", "Sun"]
+      data : arr_className,      
     },
     yAxis: {
       type: "value"
     },
     series: [
       {
-        data: [90, 30, 60, 80, 90, 100, 80],
+        data:["10","100"],
         type: "bar"
       }
     ]

@@ -172,46 +172,50 @@ export default class CreateClass extends Component {
 
   async componentDidMount() {
     Global.router = this.state.router;
-    this.getUserData();
+   await this.getUserData();
     const { currentUser } = firebase.auth();
     this.setState({ currentUser });
   // lấy xuống các lớp học đang trong quá trình xử lý
   // await co
-  await system.orderByChild('status').equalTo(this.state.status)
+  await system.orderByChild('MSGV').equalTo(this.state.userData.MSGV )
   .on('value', childSnapshot => {
-    const classRoom = [];
-    if(childSnapshot.exists()){
-      console.log('in ra child',childSnapshot)
-    system.orderByChild('gmail_teacher').equalTo(currentUser&& currentUser.email).on('value',value =>{
-      if(value.exists()){
-        value.forEach(doc => {
-          classRoom.push({
-            key: doc.key,
-            status: doc.toJSON().status,
-            _id: doc.toJSON()._id,
-            className: doc.toJSON().className,
-            class: doc.toJSON().class,
-            subject: doc.toJSON().subject,
-            count: doc.toJSON().count,
-            teacher: doc.toJSON().teacher,
-            isChecked:doc.toJSON().isChecked,
-            MSGV:doc.toJSON().MSGV,
-            dateFinish:doc.toJSON().dateFinish,
-            dateStart:doc.toJSON().dateStart,
-            numberTarget:doc.toJSON().numberTarget,
-            numberSession:doc.toJSON().numberSession,
-          });
+   if(childSnapshot.exists()){
+     const classRoom = [];
+     const temp =[];
+     childSnapshot.forEach(doc=>{
+       temp.push({
+         key: doc.key,
+         status: doc.toJSON().status,
+         _id: doc.toJSON()._id,
+         className: doc.toJSON().className,
+         class: doc.toJSON().class,
+         subject: doc.toJSON().subject,
+         count: doc.toJSON().count,
+         teacher: doc.toJSON().teacher,
+         isChecked:doc.toJSON().isChecked,
+         MSGV:doc.toJSON().MSGV,
+         dateFinish:doc.toJSON().dateFinish,
+         dateStart:doc.toJSON().dateStart,
+         numberTarget:doc.toJSON().numberTarget,
+         numberSession:doc.toJSON().numberSession,
+     
+       });
+     })
+     for( let i = 0 ; i < temp.length ; i++)
+     {
+       if(temp[i].status === false ){
+         classRoom.push(
+           temp[i]
+         );
           this.setState({
-            class: classRoom.sort((a, b) => {
-              return a.className > b.className;
-            }),
-            loading: true,
-          });
-        });
-      }
-    })
-      
-    }
+           class: classRoom.sort((a, b) => {
+             return a.className > b.className;
+           }),
+           loading: true,
+         });
+       }
+     }
+   }
   });
   }
   getUserData = async () => {

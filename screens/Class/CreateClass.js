@@ -305,20 +305,14 @@ export default class CreateClass extends Component {
       alert(e);
     }
   };
-  getListClass(){
-    // const { currentUser } = firebase.auth();
-    console.log('MSGV1',this.state.userData.MSGV);
- // lấy xuống các lớp học đang trong quá trình xử lý
-//  system.orderByChild('MSGV').equalTo(this.state.userData.MSGV)
-system.orderByChild('status').equalTo(this.state.closeClass)
- .on('value', childSnapshot => {
-   const classRoom = [];
-  //  var current = currentUser && currentUser.email;
-   if(childSnapshot.exists()){
-   system.orderByChild('MSGV').equalTo(this.state.userData.MSGV).on('value',value =>{
-     if(value.exists()){
-       value.forEach(doc => {
-         classRoom.push({
+  getListClass= async () =>{
+    await system.orderByChild('MSGV').equalTo(this.state.userData.MSGV )
+    .on('value', childSnapshot => {
+     if(childSnapshot.exists()){
+       const classRoom = [];
+       const temp =[];
+       childSnapshot.forEach(doc=>{
+         temp.push({
            key: doc.key,
            status: doc.toJSON().status,
            _id: doc.toJSON()._id,
@@ -333,19 +327,25 @@ system.orderByChild('status').equalTo(this.state.closeClass)
            dateStart:doc.toJSON().dateStart,
            numberTarget:doc.toJSON().numberTarget,
            numberSession:doc.toJSON().numberSession,
+       
          });
-         this.setState({
-           class: classRoom.sort((a, b) => {
-             return a.className > b.className;
-           }),
-           loading: true,
-         });
-       });
+       })
+       for( let i = 0 ; i < temp.length ; i++)
+       {
+         if(temp[i].status === false ){
+           classRoom.push(
+             temp[i]
+           );
+            this.setState({
+             class: classRoom.sort((a, b) => {
+               return a.className > b.className;
+             }),
+             loading: true,
+           });
+         }
+       }
      }
-   })
-     
-   }
- });
+    });
   }
   _onPressAdd() {
     this.refs.addModal.showAddModal();
